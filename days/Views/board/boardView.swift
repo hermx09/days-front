@@ -8,7 +8,15 @@
 import SwiftUI
 
 struct boardView: View {
+    @Binding var selectedBoard: String
+    @Binding var postId: Int
+    @Binding var postDetail: postResponse
+    @Binding var postResponseList: [postResponse]
+    @Binding var userId: String
+    @Binding var boardResponseList: [boardResponse]
+    
     var body: some View {
+        
         VStack{
             HStack{
                 Text("掲示板")
@@ -68,52 +76,60 @@ struct boardView: View {
             .padding(.bottom, 20)
             Divider()
                 .background(.gray)
-            Button(action: {}, label: {
-                HStack{
-                    Image(systemName: "paperclip")
-                        .rotationEffect(.degrees(-43))
-                    Text("自由掲示板")
-                    Spacer()
-                }
-            })
-            .padding(.top, 20)
-            .padding(.bottom,  10)
-            .foregroundColor(.black)
-            Button(action: {}, label: {
-                HStack{
-                    Image(systemName: "paperclip")
-                        .rotationEffect(.degrees(-43))
-                    Text("新入生掲示板")
-                    Spacer()
-                }
-            })
-            .foregroundColor(.black)
-            .padding(.bottom,  10)
-            Button(action: {}, label: {
-                HStack{
-                    Image(systemName: "paperclip")
-                        .rotationEffect(.degrees(-43))
-                    Text("卒業生掲示板")
-                    Spacer()
-                }
-            })
-            .padding(.bottom,  10)
-            .foregroundColor(.black)
-            Button(action: {}, label: {
-                HStack{
-                    Image(systemName: "paperclip")
-                        .rotationEffect(.degrees(-43))
-                    Text("情報掲示板")
-                    Spacer()
-                }
-            })
-            .foregroundColor(.black)
+            
+            ForEach(boardResponseList){board in
+                NavigationLink(
+                    destination: postView(
+                        selectedBoard: $selectedBoard,
+                        postResponseList: $postResponseList,
+                        postDetail: $postDetail,
+                        postId: $postId,
+                        userId: $userId
+                    ),
+                    label: {
+                        HStack {
+                            Image(systemName: "paperclip")
+                                .rotationEffect(.degrees(-43))
+                            Text(board.boardName)
+                            Spacer()
+                        }
+                    }
+                )
+                .foregroundColor(.black)
+                .padding(.bottom, 10)
+                .padding(.top, 20)
+                .simultaneousGesture(TapGesture().onEnded {
+                    selectedBoard = board.boardName
+                    getPosts(boardId: board.boardId) { results in
+                        DispatchQueue.main.async {
+                            guard let results = results else {
+                                print("取得失敗")
+                                return
+                            }
+                            print(results)
+                            postResponseList = results
+                        }
+                    }
+                })
+            }
         }
         .padding(40)
         Spacer()
+        .onAppear{
+            getBoards(){results in
+                DispatchQueue.main.async{
+                    guard let results = results else{
+                        return
+                    }
+                    boardResponseList = results
+                }
+            }
+        }
     }
 }
 
-#Preview {
-    boardView()
-}
+/*
+ #Preview {
+ boardView()
+ }
+ */

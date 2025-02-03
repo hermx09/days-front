@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct homeView: View {
+    @Binding var tabClick1: Bool
+    @Binding var settingFlg: Bool
     var body: some View {
         @State var boardList =
         [
@@ -69,7 +71,11 @@ struct homeView: View {
                     })
                     .foregroundColor(.black)
                     
-                    Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/, label: {
+                    Button(action: {
+                        tabClick1 = false
+                        settingFlg = true
+                        print("tab1: \(tabClick1), setting: \(settingFlg)")
+                    }, label: {
                         Image(systemName: "person.circle")
                             .resizable()
                             .frame(width: 25, height: 25)
@@ -522,6 +528,40 @@ struct circleInfo: View{
     }
 }
 
+struct DisplayBox: View{
+    var title: String
+    var date: String
+    var text: String
+    
+    var body: some View{
+        Button(action: {},
+               label: {
+            VStack{
+                Text(title)
+                    .fontWeight(.bold)
+                    .font(.body)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Text(date)
+                    .font(.caption)
+                    .padding(.bottom)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                HStack{
+                    Text(text)
+                        .font(.caption)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Image(systemName: "greaterthan")
+                        .resizable()
+                        .frame(width: 10, height: 10)
+                        .foregroundColor(.gray)
+                        .padding(.trailing, 50)
+                }
+            }
+        })
+        .padding()
+        .foregroundColor(.black)
+    }
+}
 
 
 struct addLectures: Identifiable{
@@ -559,6 +599,12 @@ struct addCircle: Identifiable{
 }
 
 
-#Preview {
-    homeView()
+struct homeView_Previews: PreviewProvider {
+    @State static var tabClick1 = true
+    @State static var settingFlg = false
+    
+    static var previews: some View {
+        homeView(tabClick1: $tabClick1, settingFlg: $settingFlg)
+    }
 }
+

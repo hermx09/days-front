@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct daysApp: App {
+    @State var lectureData: [lectureResponse] = [] // 初期化
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(lectureData: $lectureData)
         }
     }
 }

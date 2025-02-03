@@ -46,6 +46,9 @@ struct searchFriends: View {
         
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contentShape(Rectangle())
+        .onAppear{
+            print("yo")
+        }
         .onTapGesture {
             focus = nil
             print("タップ")
