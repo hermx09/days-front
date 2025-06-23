@@ -16,6 +16,8 @@ struct PostDetailView: View {
     @Binding var postId: Int
     @State var commentResponseList: [commentResponse] = []
     @Binding var selectedBoard: String
+    @Binding var nextFavoriteCount: Int
+    @Binding var isFavorite: Bool
     
     var body: some View {
         
@@ -30,12 +32,35 @@ struct PostDetailView: View {
                 }
                 Text(postDetail.postTitle)
                 Text(postDetail.postMessage)
+                    .font(.callout)
                 HStack{
-                    Image(systemName: "heart.fill")
-                    Text("\(postDetail.favorite)")
+                    Button(action: {
+                        toggleFavorite(postId: postId, userId: userId, actionName: "favorite"){result in
+                            print("開始")
+                            
+                                guard let result = result else{
+                                    return
+                                }
+                            if(result){
+                                isFavorite = true
+                                nextFavoriteCount += 1
+                            }else{
+                                isFavorite = false
+                                nextFavoriteCount -= 1
+                            }
+                        }
+                    }, label: {
+                        Image(systemName: isFavorite ? "heart.fill": "heart")
+                            .resizable()
+                            .frame(width: 8, height: 8)
+                            .foregroundColor(isFavorite ? .red: .gray)
+                    })
+                    Text("\(nextFavoriteCount)")
                     Image(systemName: "bubble")
+                    Text("\(commentResponseList.count)")
                     Image(systemName: "star")
                 }
+                .font(.caption)
                 ForEach(commentResponseList){comment in
                     VStack{
                         Divider()
@@ -114,6 +139,29 @@ struct PostDetailView: View {
         
         .navigationBarHidden(true)
         .onAppear{
+            print("どっち", isFavorite)
+            getActionPost(userId: userId){results in
+                DispatchQueue.main.async{
+                    guard let results = results else{
+                        return
+                    }
+                    for result in results{
+                        if(result.actionName == "favorite"){
+                            isFavorite = true
+                        }else{
+                            isFavorite = false
+                        }
+                    }
+                }
+            }
+            getPostFavorite(postId: postId){result in
+                DispatchQueue.main.async{
+                    guard let result = result else{
+                        return
+                    }
+                    nextFavoriteCount = result
+                }
+            }
             getComments(postId: postId){results in
                 DispatchQueue.main.async{
                     guard let results = results else{

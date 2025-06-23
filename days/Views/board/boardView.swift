@@ -14,6 +14,7 @@ struct boardView: View {
     @Binding var postResponseList: [postResponse]
     @Binding var userId: String
     @Binding var boardResponseList: [boardResponse]
+    @State var boardId: Int = 0
     
     var body: some View {
         
@@ -84,7 +85,8 @@ struct boardView: View {
                         postResponseList: $postResponseList,
                         postDetail: $postDetail,
                         postId: $postId,
-                        userId: $userId
+                        userId: $userId,
+                        boardId: $boardId
                     ),
                     label: {
                         HStack {
@@ -99,8 +101,9 @@ struct boardView: View {
                 .padding(.bottom, 10)
                 .padding(.top, 20)
                 .simultaneousGesture(TapGesture().onEnded {
+                    boardId = board.boardId
                     selectedBoard = board.boardName
-                    getPosts(boardId: board.boardId) { results in
+                    /*getPosts(boardId: board.boardId) { results in
                         DispatchQueue.main.async {
                             guard let results = results else {
                                 print("取得失敗")
@@ -109,7 +112,7 @@ struct boardView: View {
                             print(results)
                             postResponseList = results
                         }
-                    }
+                    }*/
                 })
             }
         }
