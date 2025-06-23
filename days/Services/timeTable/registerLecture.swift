@@ -1,5 +1,5 @@
 //
-//  resisterLecture.swift
+//  registerLecture.swift
 //  days
 //
 //  Created by 長山瑞 on 2024/10/15.
@@ -7,26 +7,26 @@
 
 import Foundation
 
-struct resisterRequest: Codable{
+struct registerRequest: Codable{
     var userId: String
     var lectureId: Int
 }
 
-struct resisterResponse: Codable{
-    var resisterResponse: String
+struct registerResponse: Codable{
+    var registerResponse: String
 }
 
-func resisterLecture(userId: String, lectureId: Int, completion: @escaping(String?) -> Void){
+func registerLecture(userId: String, lectureId: Int, completion: @escaping(String?) -> Void){
     
     print("登録開始")
     
-    guard let url = URL(string: "http://localhost:3000/resisterLecture")else{
+    guard let url = URL(string: "http://localhost:3000/registerLecture")else{
         completion(nil)
         return
     }
     
     var request = URLRequest(url: url)
-    var requestData = resisterRequest(userId: userId, lectureId: lectureId)
+    var requestData = registerRequest(userId: userId, lectureId: lectureId)
     
     request.httpMethod = "POST"
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -52,9 +52,9 @@ func resisterLecture(userId: String, lectureId: Int, completion: @escaping(Strin
         
         if let data = data{
             do{
-                var responseData = try JSONDecoder().decode(resisterResponse.self, from: data)
+                var responseData = try JSONDecoder().decode(registerResponse.self, from: data)
                 print("Response: \(responseData)")
-                completion(responseData.resisterResponse)
+                completion(responseData.registerResponse)
             }catch{
                 print("Decoding error: \(error)")
                 completion(nil)

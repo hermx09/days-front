@@ -10,7 +10,7 @@ import SwiftUI
 struct searchLectureResult: View {
     @Binding var lectureData: [lectureResponse]
     @State var lectureDataTitle = ["学部", "講義名", "教員名", "開講期", "曜日", "時限", "場所", "教室"]
-    @State var resisterFlg = false
+    @State var registerFlg = false
     @State var completionFlg = false
     @State var faculty: String = ""
     @State var year: String = ""
@@ -73,7 +73,7 @@ struct searchLectureResult: View {
                          ForEach(0 ..< dataArray.count, id: \.self){index in
                              if(index == 1){
                                  Button(action: {
-                                     resisterFlg = true
+                                     registerFlg = true
                                      faculty = data.faculty
                                      year = data.year
                                      lectureName = data.lectureName
@@ -111,10 +111,10 @@ struct searchLectureResult: View {
                     }
                 }
             }
-            .alert("授業を登録しますか？", isPresented: $resisterFlg){
+            .alert("授業を登録しますか？", isPresented: $registerFlg){
                 Button("登録"){
                     print("\(lectureId)を\(userId)に登録")
-                    resisterLecture(userId: userId, lectureId: lectureId){result  in
+                    registerLecture(userId: userId, lectureId: lectureId){result  in
                         guard let resultMessage = result else{
                             print("授業登録失敗")
                             return
