@@ -25,7 +25,7 @@ struct lectureResponse: Codable, Equatable, Identifiable{
 
 func searchLecture(faculty: String, year: String, springFlg: Bool, autumnFlg: Bool, day: String, period: Int, lectureName: String, teacherName: String, place: String, completion: @escaping([lectureResponse]?) -> Void){
     print("検索送信")
-    var components = URLComponents(string: "http://localhost:3000/searchLecture")
+    var components = URLComponents(string: "http://192.168.86.220:3000/searchLecture")
         
         components?.queryItems = [
             URLQueryItem(name: "faculty", value: faculty),

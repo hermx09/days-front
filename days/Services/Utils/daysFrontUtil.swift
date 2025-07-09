@@ -9,7 +9,7 @@ import Foundation
 
 struct APIRequest{
     static func getRequest<T: Decodable>(endPoint: String, queryItems: [URLQueryItem]? = nil, completion: @escaping(Result<T, Error>) -> Void){
-        var components = URLComponents(string: "http://localhost:3000" + endPoint)
+        var components = URLComponents(string: "http://192.168.86.220:3000" + endPoint)
         components?.queryItems = queryItems
         
         guard let url = components?.url else{
@@ -44,7 +44,7 @@ struct APIRequest{
     }
     
     static func postRequest<T: Decodable>(endPoint: String, body: Data? = nil, completion: @escaping(Result<T, Error>) -> Void){
-        var components = URLComponents(string: "http://localhost:3000" + endPoint)
+        var components = URLComponents(string: "http://192.168.86.220:3000" + endPoint)
         
         guard let url = components?.url else{
             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
@@ -96,7 +96,11 @@ public func timeAgoWithDateFormat(from dateString: String) -> String {
     let components = calendar.dateComponents([.second, .minute, .hour, .day], from: date, to: now)
     
     // 差に応じて適切な形式で表示
-    if let days = components.day, days >= 7 {
+    if let years = components.year, years > 0 {
+        return "\(years)年前"
+    } else if let months = components.month, months > 0 {
+        return "\(months)か月前"
+    } else if let days = components.day, days >= 7 {
         // 7日以上経過していたら日付表示
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM/dd"

@@ -15,7 +15,7 @@ struct boardResponse: Codable, Identifiable{
 }
 
 func getBoards(completion: @escaping([boardResponse]?) -> Void){
-    guard let url = URL(string: "http://localhost:3000/getBoards")else{
+    guard let url = URL(string: "http://192.168.86.220:3000/getBoards")else{
     return completion(nil)
     }
     var request = URLRequest(url: url)

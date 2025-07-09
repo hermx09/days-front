@@ -30,7 +30,7 @@ func loginCheck(idName: String, passName: String, completion: @escaping(Bool?) -
     }
     
     print("id: \(idName)  pass: \(passName)")
-    guard let url = URL(string: "http://localhost:3000/authCheck") else{
+    guard let url = URL(string: "http://192.168.86.220:3000/authCheck") else{
         completion(nil)
         return
     }
@@ -87,7 +87,7 @@ func sendToken(completion: @escaping(tokenResponse?) -> Void){
         return
     }
     
-    guard let url = URL(string: "http://localhost:3000/protected") else{
+    guard let url = URL(string: "http://192.168.86.220:3000/protected") else{
         completion(nil)
         return
     }

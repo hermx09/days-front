@@ -19,7 +19,7 @@ struct MyResponse: Codable, Identifiable{
 
 func sendPostRequest(friendName: String, completion: @escaping([MyResponse]?) -> Void){
     print("リクエスト送信")
-    guard let url = URL(string: "http://localhost:3000/searchFriends")else{
+    guard let url = URL(string: "http://192.168.86.220:3000/searchFriends")else{
         completion(nil)
         return}
     

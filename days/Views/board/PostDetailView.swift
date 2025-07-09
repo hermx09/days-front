@@ -18,60 +18,67 @@ struct PostDetailView: View {
     @Binding var selectedBoard: String
     @Binding var nextFavoriteCount: Int
     @Binding var isFavorite: Bool
+    @State var targetCommentId: Int = 0
     
     var body: some View {
         
             VStack{
-                PostHeader(selectedBoard: $selectedBoard)
-                HStack{
-                    Image(systemName: "person.circle")
-                    VStack{
-                        Text(postDetail.posterId)
-                        Text(postDetail.createdAt)
+                    PostHeader(selectedBoard: $selectedBoard)
+                VStack(alignment: .leading){
+                    HStack{
+                        Image(systemName: "person.circle")
+                            .resizable()
+                                .frame(width: 30, height: 30)
+                        VStack(alignment: .leading){
+                            Text(postDetail.posterId)
+                                .font(.body)
+                            Text(postDetail.createdAt)
+                                .font(.caption2)
+                                .foregroundColor(Color(red: 0.4039, green: 0.3961, blue: 0.3961))
+                        }
                     }
-                }
-                Text(postDetail.postTitle)
-                Text(postDetail.postMessage)
-                    .font(.callout)
-                HStack{
-                    Button(action: {
-                        toggleFavorite(postId: postId, userId: userId, actionName: "favorite"){result in
-                            print("開始")
-                            
+                    Text(postDetail.postTitle)
+                        .font(.headline)
+                        .padding(5)
+                    Text(postDetail.postMessage)
+                        .font(.caption)
+                    HStack{
+                        Button(action: {
+                            toggleFavorite(postId: postId, userId: userId, actionName: "favorite"){result in
+                                print("開始")
+                                
                                 guard let result = result else{
                                     return
                                 }
-                            if(result){
-                                isFavorite = true
-                                nextFavoriteCount += 1
-                            }else{
-                                isFavorite = false
-                                nextFavoriteCount -= 1
+                                if(result){
+                                    isFavorite = true
+                                    nextFavoriteCount += 1
+                                }else{
+                                    isFavorite = false
+                                    nextFavoriteCount -= 1
+                                }
                             }
-                        }
-                    }, label: {
-                        Image(systemName: isFavorite ? "heart.fill": "heart")
-                            .resizable()
-                            .frame(width: 8, height: 8)
-                            .foregroundColor(isFavorite ? .red: .gray)
-                    })
-                    Text("\(nextFavoriteCount)")
-                    Image(systemName: "bubble")
-                    Text("\(commentResponseList.count)")
-                    Image(systemName: "star")
-                }
-                .font(.caption)
-                ForEach(commentResponseList){comment in
-                    VStack{
-                        Divider()
-                        Button(action:{
-                            
-                        }, label:{
-                            Text(comment.commentMessage)
+                        }, label: {
+                            Image(systemName: isFavorite ? "heart.fill": "heart")
+                                .resizable()
+                                .frame(width: 8, height: 8)
+                                .foregroundColor(isFavorite ? .red: .gray)
                         })
+                        Text("\(nextFavoriteCount)")
+                        Image(systemName: "bubble")
+                        Text("\(commentResponseList.count)")
+                        Image(systemName: "star")
                     }
-                    .foregroundColor(.black)
                 }
+                .padding(EdgeInsets(top: 30, leading: 30, bottom: 10, trailing: 30))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .font(.caption)
+                ScrollView{
+                    ForEach(commentResponseList){comment in
+                        CommentView(comment: comment, targetCommentId: $targetCommentId, isFocused: $focus)
+                    }
+                }
+                .padding(30)
                 Spacer()
                 HStack{
                     Button(action: {
@@ -90,9 +97,15 @@ struct PostDetailView: View {
                         .font(.caption)
                         .foregroundColor(.black)
                         .onSubmit {
-                            insertComment(commentMessage: commentMessage, commenterId: userId, postId: postDetail.postId){result in
+                            let trimmedMessage = commentMessage.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    guard !trimmedMessage.isEmpty else {
+                                        return
+                                    }
+                            insertComment(commentMessage: commentMessage, commenterId: userId, postId: postDetail.postId, targetCommentId: targetCommentId){result in
                                 DispatchQueue.main.async{
+                                    targetCommentId = 0
                                     print(result)
+                                    commentMessage = ""
                                     getComments(postId: postId){results in
                                         DispatchQueue.main.async{
                                             guard let results = results else{
@@ -106,13 +119,19 @@ struct PostDetailView: View {
                             }
                         }
                         .focused($focus)
-                        .submitLabel(.search)
+                        .submitLabel(.send)
                     Spacer()
                     Button(action: {
                         focus = false
-                        insertComment(commentMessage: commentMessage, commenterId: userId, postId: postDetail.postId){result in
+                        let trimmedMessage = commentMessage.trimmingCharacters(in: .whitespacesAndNewlines)
+                                guard !trimmedMessage.isEmpty else {
+                                    return
+                                }
+                        insertComment(commentMessage: commentMessage, commenterId: userId, postId: postDetail.postId, targetCommentId: targetCommentId){result in
                             DispatchQueue.main.async{
+                                targetCommentId = 0
                                 print(result)
+                                commentMessage = ""
                                 getComments(postId: postId){results in
                                     DispatchQueue.main.async{
                                         guard let results = results else{
@@ -129,7 +148,7 @@ struct PostDetailView: View {
                             .padding(.trailing, 10)
                     })
                 }
-                .foregroundColor(.orange)
+                .foregroundColor(Color(red: 1.0, green: 0.392, blue: 0.392))
                 .padding(5)
                 .overlay(RoundedRectangle(cornerRadius: 40).stroke(lineWidth: 0.1))
                 .background(Color(red: 0.95, green: 0.95, blue: 0.95), in:
@@ -145,12 +164,8 @@ struct PostDetailView: View {
                     guard let results = results else{
                         return
                     }
-                    for result in results{
-                        if(result.actionName == "favorite"){
-                            isFavorite = true
-                        }else{
-                            isFavorite = false
-                        }
+                    isFavorite = results.contains { result in
+                        result.postId == postId && result.actionName == "favorite"
                     }
                 }
             }

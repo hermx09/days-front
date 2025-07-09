@@ -13,20 +13,32 @@ struct InsertCommentRequest: Codable, Equatable{
     let postId: Int
 }
 
+struct InsertResponseCommentRequest: Codable, Equatable{
+    let responseMessage: String
+    let commenterId: String
+    let commentId: Int
+}
+
+
 struct InsertCommentResponse: Codable, Equatable, Identifiable{
     let id = UUID()
     var message: String
 }
 
-func insertComment(commentMessage: String, commenterId: String, postId: Int, completion: @escaping(String) -> Void){
-        
-    let requestBody = InsertCommentRequest(commentMessage: commentMessage, commenterId: commenterId, postId: postId)
-        
-    guard let jsonData = try? JSONEncoder().encode(requestBody) else{
-        return completion("リクエストデータエンコード失敗")
+func insertComment(commentMessage: String, commenterId: String, postId: Int, targetCommentId: Int, completion: @escaping(String) -> Void){
+    
+    var jsonData: Data?
+    var endPoint = "/insertComment"
+    if(targetCommentId != 0){
+        let requestResponseBody = InsertResponseCommentRequest(responseMessage: commentMessage, commenterId: commenterId, commentId: targetCommentId)
+        endPoint = "/insertResponseComment"
+        jsonData = try? JSONEncoder().encode(requestResponseBody)
+    }else{
+        let requestCommentBody = InsertCommentRequest(commentMessage: commentMessage, commenterId: commenterId, postId: postId)
+        jsonData = try? JSONEncoder().encode(requestCommentBody)
     }
     
-    APIRequest.postRequest(endPoint: "/insertComment", body: jsonData){(result: Result<[InsertCommentResponse], Error>) in
+    APIRequest.postRequest(endPoint: endPoint, body: jsonData){(result: Result<[InsertCommentResponse], Error>) in
         var resultMessage: String
         switch result{
         case .success(let comments):

@@ -20,7 +20,7 @@ func registerLecture(userId: String, lectureId: Int, completion: @escaping(Strin
     
     print("登録開始")
     
-    guard let url = URL(string: "http://localhost:3000/registerLecture")else{
+    guard let url = URL(string: "http://192.168.86.220:3000/registerLecture")else{
         completion(nil)
         return
     }

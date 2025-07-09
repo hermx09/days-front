@@ -15,7 +15,7 @@ struct userDataResponse: Codable{
 }
 
 func getUserData(userId: String, completion: @escaping(userDataResponse?) -> Void){
-    var components = URLComponents(string: "http://localhost:3000/getUserData")
+    var components = URLComponents(string: "http://192.168.86.220:3000/getUserData")
         
         components?.queryItems = [
             URLQueryItem(name: "userId", value: userId)
