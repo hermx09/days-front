@@ -8,14 +8,14 @@
 import Foundation
 
 struct responseCommentResponse: Codable, Equatable, Identifiable{
-    var responseId: Int
+    var responseCommentId: Int
     var commentId: Int
     var responseMessage: String
     var commenterId: String
     var favorite: Int
     var createdAt: String
     var isAnonymous: Bool
-    var id: Int { responseId }
+    var id: Int { responseCommentId }
 }
 
 

@@ -9,6 +9,8 @@ import Combine
 
 class FavoriteManager: ObservableObject {
     @Published var isFavoriteList: [Int: Bool] = [:]
+    @Published var isCommentFavoriteList: [Int: Bool] = [:]
+    @Published var isResponseCommentFavoriteList: [Int: Bool] = [:]    
     
     func loadFavorites(userId: String, posts: [postResponse]) {
         getActionPost(userId: userId) { results in

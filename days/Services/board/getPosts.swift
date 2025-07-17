@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct postResponse: Codable, Equatable, Identifiable{
+struct postResponse: Codable, Equatable, Identifiable, Hashable{
     let id = UUID()
     var postId: Int
     var postTitle: String

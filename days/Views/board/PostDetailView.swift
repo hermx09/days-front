@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PostDetailView: View {
+    @StateObject var favoriteManager = FavoriteManager()
     @State var commentMessage: String = ""
     @State var isCheck = false
     @Binding var postDetail: postResponse
@@ -17,8 +18,12 @@ struct PostDetailView: View {
     @State var commentResponseList: [commentResponse] = []
     @Binding var selectedBoard: String
     @Binding var nextFavoriteCount: Int
-    @Binding var isFavorite: Bool
+    @State var isFavorite: Bool = false
     @State var targetCommentId: Int = 0
+    @State var isCommentFavoriteList : [Int: Bool] = [:]
+    @State var isResponseCommentFavoriteList : [Int: Bool] = [:]
+    @State var isCommentAnonymous = false
+    @Binding var favoriteCount: [Int: Int]
     
     var body: some View {
         
@@ -30,7 +35,7 @@ struct PostDetailView: View {
                             .resizable()
                                 .frame(width: 30, height: 30)
                         VStack(alignment: .leading){
-                            Text(postDetail.posterId)
+                            Text(postDetail.isAnonymous ? "匿名" : postDetail.posterId)
                                 .font(.body)
                             Text(postDetail.createdAt)
                                 .font(.caption2)
@@ -52,10 +57,10 @@ struct PostDetailView: View {
                                 }
                                 if(result){
                                     isFavorite = true
-                                    nextFavoriteCount += 1
+                                    favoriteCount[postId, default: 0] += 1
                                 }else{
                                     isFavorite = false
-                                    nextFavoriteCount -= 1
+                                    favoriteCount[postId, default: 0] -= 1
                                 }
                             }
                         }, label: {
@@ -64,7 +69,7 @@ struct PostDetailView: View {
                                 .frame(width: 8, height: 8)
                                 .foregroundColor(isFavorite ? .red: .gray)
                         })
-                        Text("\(nextFavoriteCount)")
+                        Text("\(favoriteCount[postId, default: 0])")
                         Image(systemName: "bubble")
                         Text("\(commentResponseList.count)")
                         Image(systemName: "star")
@@ -75,22 +80,47 @@ struct PostDetailView: View {
                 .font(.caption)
                 ScrollView{
                     ForEach(commentResponseList){comment in
-                        CommentView(comment: comment, targetCommentId: $targetCommentId, isFocused: $focus)
+                        CommentView(comment: comment, targetCommentId: $targetCommentId, isFocused: $focus, isCommentFavoriteList: $favoriteManager.isCommentFavoriteList, isResponseCommentFavoriteList: $favoriteManager.isResponseCommentFavoriteList, userId: $userId)
+                    }
+                    .onAppear{
+                        getActionComment(userId: userId){results in
+                            DispatchQueue.main.async{
+                                guard let results = results else{
+                                    return
+                                }
+                                for result in results {
+                                    if(result.actionName == "favorite"){
+                                        favoriteManager.isCommentFavoriteList[result.commentId] = true
+                                    }
+                                }
+                            }
+                        }
+                        getActionResponseComment(userId: userId){results in
+                            DispatchQueue.main.async{
+                                guard let results = results else{
+                                    return
+                                }
+                                for result in results {
+                                    if(result.actionName == "favorite"){
+                                        favoriteManager.isResponseCommentFavoriteList[result.responseCommentId] = true
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 .padding(30)
                 Spacer()
                 HStack{
                     Button(action: {
-                        isCheck.toggle()
+                        isCommentAnonymous.toggle()
                     }, label: {
                         HStack{
-                            Image(systemName: getSystemNameByCheckBox(isCheck: isCheck))
+                            Image(systemName: isCommentAnonymous ? "checkmark.square" : "square")
                                 .frame(width: 10, height: 10)
                             Text("匿名")
                                 .font(.callout)
                         }
-                        
                         .padding(.leading, 10)
                     })
                     TextField("コメントを入力してください", text: $commentMessage)
@@ -101,7 +131,7 @@ struct PostDetailView: View {
                                     guard !trimmedMessage.isEmpty else {
                                         return
                                     }
-                            insertComment(commentMessage: commentMessage, commenterId: userId, postId: postDetail.postId, targetCommentId: targetCommentId){result in
+                            insertComment(commentMessage: commentMessage, commenterId: userId, postId: postDetail.postId, targetCommentId: targetCommentId, isAnonymous: isCommentAnonymous){result in
                                 DispatchQueue.main.async{
                                     targetCommentId = 0
                                     print(result)
@@ -127,7 +157,7 @@ struct PostDetailView: View {
                                 guard !trimmedMessage.isEmpty else {
                                     return
                                 }
-                        insertComment(commentMessage: commentMessage, commenterId: userId, postId: postDetail.postId, targetCommentId: targetCommentId){result in
+                        insertComment(commentMessage: commentMessage, commenterId: userId, postId: postDetail.postId, targetCommentId: targetCommentId, isAnonymous: isCommentAnonymous){result in
                             DispatchQueue.main.async{
                                 targetCommentId = 0
                                 print(result)
@@ -158,7 +188,6 @@ struct PostDetailView: View {
         
         .navigationBarHidden(true)
         .onAppear{
-            print("どっち", isFavorite)
             getActionPost(userId: userId){results in
                 DispatchQueue.main.async{
                     guard let results = results else{

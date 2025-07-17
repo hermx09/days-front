@@ -10,33 +10,34 @@ import SwiftUI
 struct homeView: View {
     @Binding var tabClick1: Bool
     @Binding var settingFlg: Bool
+    var onSettingView: () -> Void
+    @State var boardList =
+    [
+        addBoards(title: "自由掲示板", contents: "内容"),
+        addBoards(title: "新卒掲示板", contents: "内容"),
+        addBoards(title: "新卒掲示板", contents: "内容"),
+        addBoards(title:"サークル掲示板",contents: "内容"),
+        addBoards(title:"恋愛掲示板",contents: "内容"),
+        addBoards(title:"物販掲示板",contents: "内容")
+    ]
+    @State var favoriteBoardList =
+    [
+    addFavoriteBoards(userName: "匿名", title: "題名", content: "内容", boardName: "自由掲示板", heartCnt: 30, bubbleCnt: 10),
+     addFavoriteBoards(userName: "匿名", title: "題名", content: "内容", boardName: "自由掲示板", heartCnt: 30, bubbleCnt: 10)
+    ]
+    @State var lectureList =
+    [
+    addLectures(star: 5, lectureName: "政治体制論", teacherName: "外池 力", middle: false, last: true, bring: true, text: "内容", time: "2023/09/14"),
+     addLectures(star: 4, lectureName: "政治体制論", teacherName: "内池 力", middle: true, last: false, bring: false, text: "内容", time: "2024/10/14"),
+     addLectures(star: 3, lectureName: "政治体制論", teacherName: "内池 力", middle: true, last: false, bring: false, text: "内容", time: "2024/10/14")
+    ]
+    @State var circleList =
+    [
+    addCircle(circleName: "サークル名前", circleContents: "サークル説明"),
+    addCircle(circleName: "サークル名前", circleContents: "サークル説明"),
+    addCircle(circleName: "サークル名前", circleContents: "サークル説明")
+    ]
     var body: some View {
-        @State var boardList =
-        [
-            addBoards(title: "自由掲示板", contents: "内容"),
-            addBoards(title: "新卒掲示板", contents: "内容"),
-            addBoards(title: "新卒掲示板", contents: "内容"),
-            addBoards(title:"サークル掲示板",contents: "内容"),
-            addBoards(title:"恋愛掲示板",contents: "内容"),
-            addBoards(title:"物販掲示板",contents: "内容")
-        ]
-        @State var favoriteBoardList =
-        [
-        addFavoriteBoards(userName: "匿名", title: "題名", content: "内容", boardName: "自由掲示板", heartCnt: 30, bubbleCnt: 10),
-         addFavoriteBoards(userName: "匿名", title: "題名", content: "内容", boardName: "自由掲示板", heartCnt: 30, bubbleCnt: 10)
-        ]
-        @State var lectureList =
-        [
-        addLectures(star: 5, lectureName: "政治体制論", teacherName: "外池 力", middle: false, last: true, bring: true, text: "内容", time: "2023/09/14"),
-         addLectures(star: 4, lectureName: "政治体制論", teacherName: "内池 力", middle: true, last: false, bring: false, text: "内容", time: "2024/10/14"),
-         addLectures(star: 3, lectureName: "政治体制論", teacherName: "内池 力", middle: true, last: false, bring: false, text: "内容", time: "2024/10/14")
-        ]
-        @State var circleList =
-        [
-        addCircle(circleName: "サークル名前", circleContents: "サークル説明"),
-        addCircle(circleName: "サークル名前", circleContents: "サークル説明"),
-        addCircle(circleName: "サークル名前", circleContents: "サークル説明")
-        ]
         
         ScrollView(.vertical){
             VStack(alignment: .leading){
@@ -74,6 +75,7 @@ struct homeView: View {
                     Button(action: {
                         tabClick1 = false
                         settingFlg = true
+                        onSettingView()
                         print("tab1: \(tabClick1), setting: \(settingFlg)")
                     }, label: {
                         Image(systemName: "person.circle")
@@ -598,13 +600,4 @@ struct addCircle: Identifiable{
     var id = UUID()
 }
 
-
-struct homeView_Previews: PreviewProvider {
-    @State static var tabClick1 = true
-    @State static var settingFlg = false
-    
-    static var previews: some View {
-        homeView(tabClick1: $tabClick1, settingFlg: $settingFlg)
-    }
-}
 

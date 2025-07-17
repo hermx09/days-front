@@ -5,7 +5,9 @@ struct CommentView: View {
     @State var responseComments: [responseCommentResponse] = []
     @Binding var targetCommentId: Int
     @FocusState.Binding var isFocused: Bool
-    @State var isResponseFavoriteList : [Int: Bool] = [:]
+    @Binding var isCommentFavoriteList : [Int: Bool]
+    @Binding var isResponseCommentFavoriteList : [Int: Bool]
+    @Binding var userId: String
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -14,14 +16,28 @@ struct CommentView: View {
                     Image(systemName: "person.circle")
                         .resizable()
                         .frame(width: 20, height: 20)
-                    Text(comment.commenterId)
+                    Text(comment.isAnonymous ? "匿名" : comment.commenterId)
                         .font(.body)
                     Spacer()
                     HStack {
-                        Button(action: {}) {
-                            Image(systemName: "heart.fill")
+                        Button(action: {
+                            toggleFavorite(commentId: comment.commentId, userId: userId, actionName: "favorite"){result in
+                                print("開始")
+                                
+                                guard let result = result else{
+                                    return
+                                }
+                                if(result){
+                                    isCommentFavoriteList[comment.commentId] = true
+                                }else{
+                                    isCommentFavoriteList[comment.commentId] = false
+                                }
+                            }
+                        }, label: {
+                            Image(systemName: (isCommentFavoriteList[comment.commentId] ?? false) ? "heart.fill": "heart")
                                 .padding(5)
-                        }
+                                .foregroundColor((isCommentFavoriteList[comment.commentId] ?? false) ? .red: .gray)
+                        })
                         Divider()
                             .frame(height: 24)
                             .background(Color.gray.opacity(0.3))
@@ -66,13 +82,28 @@ struct CommentView: View {
                                 Image(systemName: "person.circle")
                                     .resizable()
                                     .frame(width: 20, height: 20)
-                                Text(responseComment.commenterId)
+                                Text(responseComment.isAnonymous ? "匿名" : responseComment.commenterId)
                                     .font(.body)
                                 Spacer()
                                 HStack {
-                                    Button(action: {}) {
-                                        Image(systemName: "heart.fill")
+                                    Button(action: {
+                                        toggleFavorite(responseCommentId: responseComment.responseCommentId, userId: userId, actionName: "favorite"){result in
+                                            guard let result = result else{
+                                                return
+                                            }
+                                            if(result){
+                                                isResponseCommentFavoriteList[responseComment.responseCommentId] = true
+                                            }else{
+                                                isResponseCommentFavoriteList[responseComment.responseCommentId] = false
+                                            }
+                                        }
+                                    }, label: {
+                                        Image(systemName: (isResponseCommentFavoriteList[responseComment.responseCommentId] ?? false) ? "heart.fill": "heart")
                                             .padding(5)
+                                            .foregroundColor((isResponseCommentFavoriteList[responseComment.responseCommentId] ?? false) ? .red: .gray)
+                                    })
+                                    .onAppear{
+                                        print("リストは", isResponseCommentFavoriteList)
                                     }
                                     Divider()
                                         .frame(height: 24)
@@ -117,7 +148,7 @@ struct CommentView: View {
                     }
                  responseComments = results
                 }
-            }            
+            }
         }
         .foregroundColor(.black)
     }

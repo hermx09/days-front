@@ -78,43 +78,18 @@ struct boardView: View {
             Divider()
                 .background(.gray)
             
-            ForEach(boardResponseList){board in
-                NavigationLink(
-                    destination: postView(
-                        selectedBoard: $selectedBoard,
-                        postResponseList: $postResponseList,
-                        postDetail: $postDetail,
-                        postId: $postId,
-                        userId: $userId,
-                        boardId: $boardId
-                    ),
-                    label: {
-                        HStack {
-                            Image(systemName: "paperclip")
-                                .rotationEffect(.degrees(-43))
-                            Text(board.boardName)
-                            Spacer()
-                        }
-                    }
-                )
-                .foregroundColor(.black)
-                .padding(.bottom, 10)
-                .padding(.top, 20)
-                .simultaneousGesture(TapGesture().onEnded {
-                    boardId = board.boardId
-                    selectedBoard = board.boardName
-                    /*getPosts(boardId: board.boardId) { results in
-                        DispatchQueue.main.async {
-                            guard let results = results else {
-                                print("取得失敗")
-                                return
+            ForEach(boardResponseList) { board in
+                            NavigationLink(value: board) {
+                                HStack {
+                                    Image(systemName: "paperclip")
+                                        .rotationEffect(.degrees(-43))
+                                    Text(board.boardName)
+                                    Spacer()
+                                }
                             }
-                            print(results)
-                            postResponseList = results
+                            .foregroundColor(.black)
+                            .padding(.vertical, 10)
                         }
-                    }*/
-                })
-            }
         }
         .padding(40)
         Spacer()

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct boardResponse: Codable, Identifiable{
+struct boardResponse: Codable, Identifiable, Hashable{
     let id = UUID()
     var boardId: Int
     var boardName: String
