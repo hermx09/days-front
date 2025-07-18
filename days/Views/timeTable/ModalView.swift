@@ -15,6 +15,7 @@ struct ModalView: View {
     //@Binding var name: String
     //@Binding var userId: String
     @Binding var friendId: String
+    var onFriendTableView: () -> Void
     var body: some View {
         NavigationStack{
             VStack{
@@ -29,6 +30,7 @@ struct ModalView: View {
                         friendTableFlg = true
                         tabClick2 = false
                         isPresented = false
+                        onFriendTableView()
                     }, label: {
                         HStack{
                             Text(data.resultName)

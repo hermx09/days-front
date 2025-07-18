@@ -22,7 +22,7 @@ struct responseUserLectures: Codable, Equatable, Identifiable{
 
 func getUserLectures(userId: String, completion: @escaping([responseUserLectures]?) -> Void){
     
-    var components = URLComponents(string: "http://localhost:3000/getUserLectures")
+    var components = URLComponents(string: "http://192.168.86.220:3000/getUserLectures")
         
         components?.queryItems = [
             URLQueryItem(name: "userId", value: userId)

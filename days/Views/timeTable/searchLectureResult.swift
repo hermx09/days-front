@@ -10,7 +10,7 @@ import SwiftUI
 struct searchLectureResult: View {
     @Binding var lectureData: [lectureResponse]
     @State var lectureDataTitle = ["学部", "講義名", "教員名", "開講期", "曜日", "時限", "場所", "教室"]
-    @State var resisterFlg = false
+    @State var registerFlg = false
     @State var completionFlg = false
     @State var faculty: String = ""
     @State var year: String = ""
@@ -51,29 +51,13 @@ struct searchLectureResult: View {
                 }
                 ForEach(lectureData, id: \.id){data in
                     let season = data.springFlg == 1 ? "春" : "秋"
-                    
-                    /*switch data.day {
-                        case 0:
-                             dayString = "月"
-                        case 1:
-                            var dayString = "火"
-                        case 2:
-                            var dayString = "水"
-                        case 3:
-                            var dayString = "木"
-                        case 4:
-                            var dayString = "金"
-                        case 5:
-                            var dayString = "土"
-                    default:
-                        var dayString = ""
-                    }*/
+                                        
                     var dataArray = [data.faculty, data.lectureName, data.teacherName, season, data.day, String(data.period), data.place, data.roomNum]
                     GridRow{
                          ForEach(0 ..< dataArray.count, id: \.self){index in
                              if(index == 1){
                                  Button(action: {
-                                     resisterFlg = true
+                                     registerFlg = true
                                      faculty = data.faculty
                                      year = data.year
                                      lectureName = data.lectureName
@@ -111,24 +95,20 @@ struct searchLectureResult: View {
                     }
                 }
             }
-            .alert("授業を登録しますか？", isPresented: $resisterFlg){
+            .alert("授業を登録しますか？", isPresented: $registerFlg){
                 Button("登録"){
-                    print("\(lectureId)を\(userId)に登録")
-                    resisterLecture(userId: userId, lectureId: lectureId){result  in
+                    registerLecture(userId: userId, lectureId: lectureId){result  in
                         guard let resultMessage = result else{
                             print("授業登録失敗")
                             return
                         }
                         DispatchQueue.main.async{
-                            print("帰ってきたのは: \(resultMessage)")
                             returnMessage = resultMessage
                             completionFlg = true
                         }
                     }
                 }
-                Button("キャンセル", role: .cancel){
-                    print("キャンセル")
-                }
+                Button("キャンセル", role: .cancel){}
             }
             .alert(returnMessage, isPresented: $completionFlg){
                 Button("OK", role: .cancel){

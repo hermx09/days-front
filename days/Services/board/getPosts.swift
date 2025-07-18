@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct postResponse: Codable, Equatable, Identifiable{
+struct postResponse: Codable, Equatable, Identifiable, Hashable{
     let id = UUID()
     var postId: Int
     var postTitle: String
@@ -21,7 +21,7 @@ struct postResponse: Codable, Equatable, Identifiable{
 
 func getPosts(boardId: Int, completion: @escaping([postResponse]?) -> Void){
     
-    var components = URLComponents(string: "http://localhost:3000/getPosts")
+    var components = URLComponents(string: "http://192.168.86.220:3000/getPosts")
     components?.queryItems = [
         URLQueryItem(name: "boardId", value: String(boardId))
     ]
