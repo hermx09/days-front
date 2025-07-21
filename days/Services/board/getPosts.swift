@@ -19,38 +19,58 @@ struct postResponse: Codable, Equatable, Identifiable, Hashable{
     var isAnonymous: Bool
 }
 
-func getPosts(boardId: Int, completion: @escaping([postResponse]?) -> Void){
+struct postInfoForHomeResponse: Codable, Equatable, Identifiable, Hashable{
+    let id = UUID()
+    var postId: Int
+    var boardId: Int
+    var boardName: String
+    var commentCount: Int
+}
+
+func getPosts(boardId: Int, userId: String, postType: PostType, completion: @escaping([postResponse]?) -> Void){
     
-    var components = URLComponents(string: "http://192.168.86.220:3000/getPosts")
-    components?.queryItems = [
-        URLQueryItem(name: "boardId", value: String(boardId))
-    ]
-    guard let url = components?.url else{
-        return completion(nil)
-    }
-    var request = URLRequest(url: url)
-    request.httpMethod = "GET"
-    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-    
-    URLSession.shared.dataTask(with: request){data, response, err in
-        if let err = err{
-            print("Error: \(err)")
-            completion(nil)
+    var queryItems: [URLQueryItem] = [
+            URLQueryItem(name: "boardId", value: String(boardId)),
+            URLQueryItem(name: "userId", value: userId)
+        ]
+        
+        // PostType に応じてクエリパラメータ追加
+        switch postType {
+        case .myPosts:
+            queryItems.append(URLQueryItem(name: "postType", value: "myPosts"))
+        case .commented:
+            queryItems.append(URLQueryItem(name: "postType", value: "commented"))
+        case .saved:
+            queryItems.append(URLQueryItem(name: "postType", value: "saved"))
+        case .popular:
+            queryItems.append(URLQueryItem(name: "postType", value: "popular"))
+        default:
+            break // .all の場合は追加なし
         }
         
-        if let response = response as? HTTPURLResponse{
-            print("StatusCode: \(response.statusCode)")
-        }
-        
-        if let data = data{
-            do{
-                let responseData = try JSONDecoder().decode([postResponse].self, from: data)
-                print("Response: \(responseData)")
-                completion(responseData)
-            }catch{
-                print("Error decording response: \(error)")
+        APIRequest.getRequest(
+            endPoint: "/getPosts",
+            queryItems: queryItems
+        ) { (result: Result<[postResponse], Error>) in
+            switch result {
+            case .success(let posts):
+                completion(posts)
+            case .failure(let error):
                 completion(nil)
             }
         }
-    }.resume()
+}
+
+func getPostsInfoForHome(completion: @escaping([postInfoForHomeResponse]?) -> Void){
+        
+        APIRequest.getRequest(
+            endPoint: "/getPostsInfoForHome"
+        ) { (result: Result<[postInfoForHomeResponse], Error>) in
+            switch result {
+            case .success(let posts):
+                completion(posts)
+            case .failure(let error):
+                completion(nil)
+            }
+        }
 }

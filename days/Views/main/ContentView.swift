@@ -34,6 +34,8 @@ struct ContentView: View {
     @State var postResponseList: [postResponse] = []
     @State var postDetail: postResponse = postResponse(postId: 0, postTitle: "", postMessage: "", posterId: "", favorite: 0, boardId: 0, createdAt: "0", isAnonymous: false)
     @State var favoriteCount: [Int: Int] = [:]
+    @State var savePostCount: [Int: Int] = [:]
+    @State var postType: PostType = .all
 
     @State private var currentTab: Screen = .home{
         didSet{
@@ -42,7 +44,9 @@ struct ContentView: View {
     }
 
     /// ✅ 遷移履歴を管理するパス
-    @State private var path = NavigationPath()
+    @State private var homePath = NavigationPath()
+    @State private var timeTablePath = NavigationPath()
+    @State private var boardPath = NavigationPath()
     
     func validateToken() {
             sendToken { result in
@@ -67,7 +71,6 @@ struct ContentView: View {
             }
     }
 
-
     var body: some View {
         if auth {
             authView(auth: $auth, tabClick1: .constant(false), userId: $userId, userName: $userName, faculty: $faculty)
@@ -75,9 +78,9 @@ struct ContentView: View {
             VStack(spacing: 0) {
                     switch currentTab {
                     case .home:
-                        NavigationStack(path: $path){
-                            homeView(tabClick1: .constant(false), settingFlg: .constant(false), onSettingView: {
-                                path.append(Screen.setting)
+                        NavigationStack(path: $homePath){
+                            homeView(tabClick1: .constant(false), settingFlg: .constant(false), userId: $userId, homePath: $homePath, favoriteCount: $favoriteCount, onSettingView: {
+                                homePath.append(Screen.setting)
                             })
                                 .onAppear{
                                     validateToken()
@@ -85,14 +88,41 @@ struct ContentView: View {
                                 .navigationDestination(for: Screen.self){screen in
                                     switch screen {
                                         case .setting:
-                                            settingView(auth: $auth, settingFlg: .constant(false), path: $path)
+                                            settingView(auth: $auth, settingFlg: .constant(false), homePath: $homePath)
                                         default:
                                             EmptyView()
                                     }
                                 }
+                                .navigationDestination(for: PostType.self) { type in
+                                    postView(
+                                        board: boardResponse(boardId: 0, boardName: titleForPostType(type: type), creatorId: userId),
+                                        selectedBoard: $selectedBoard,
+                                        postResponseList: $postResponseList,
+                                        postDetail: $postDetail,
+                                        postId: $postId,
+                                        userId: $userId,
+                                        favoriteCount: $favoriteCount,
+                                        boardId: .constant(0),
+                                        postType: .constant(type)
+                                    )
+                                    .onAppear{
+                                        selectedBoard = titleForPostType(type: type)
+                                    }
+                                }
+                                .navigationDestination(for: postResponse.self) { post in
+                                            PostDetailView(
+                                                postDetail: .constant(post),
+                                                userId: $userId,
+                                                postId: .constant(post.postId),
+                                                selectedBoard: $selectedBoard,
+                                                nextFavoriteCount: .constant(post.favorite),
+                                                favoriteCount: $favoriteCount,
+                                                savePostCount: $savePostCount
+                                            )
+                                }
                         }
                     case .timetable:
-                        NavigationStack(path: $path){
+                        NavigationStack(path: $timeTablePath){
                             timeTableView(
                                 tabClick2: .constant(false),
                                 addLectureFlg: .constant(false),
@@ -101,17 +131,17 @@ struct ContentView: View {
                                 friendTableFlg: .constant(false),
                                 searchLectureResultFlg: .constant(false),
                                 onAddLectureView: {
-                                    path.append(Screen.addLecture)
+                                    timeTablePath.append(Screen.addLecture)
                                 },
                                 onFriendTableView: {
-                                    path.append(Screen.friendTable)
+                                    timeTablePath.append(Screen.friendTable)
                                 }
                             )
                             .navigationDestination(for: Screen.self){screen in
                                 switch screen {
                                     case .addLecture:
                                     addLectureView(lectureData: $lectureData, searchLectureResultFlg: Binding.constant(false), addLectureFlg: Binding.constant(false), onSearchLectureResultView: {
-                                        path.append(Screen.searchLectureResult)
+                                        timeTablePath.append(Screen.searchLectureResult)
                                     })
                                     case .friendTable:
                                         friendTableView(tabClick2: Binding.constant(false), friendId: $friendId)
@@ -124,14 +154,15 @@ struct ContentView: View {
                         }
 
                     case .board:
-                        NavigationStack(path: $path) {
+                        NavigationStack(path: $boardPath) {
                             boardView(
                                 selectedBoard: $selectedBoard,
                                 postId: $postId,
                                 postDetail: $postDetail,
                                 postResponseList: $postResponseList,
                                 userId: $userId,
-                                boardResponseList: $boardResponseList
+                                boardResponseList: $boardResponseList,
+                                boardPath: $boardPath
                             )
                             /// ✅ 遷移先のマッピング
                             .navigationDestination(for: boardResponse.self) { board in
@@ -143,10 +174,27 @@ struct ContentView: View {
                                     postId: $postId,
                                     userId: $userId,
                                     favoriteCount: $favoriteCount,
-                                    boardId: .constant(board.boardId)
+                                    boardId: .constant(board.boardId),
+                                    postType: .constant(.all)
                                 )
                                 .onAppear{
                                     selectedBoard = board.boardName
+                                }
+                            }
+                            .navigationDestination(for: PostType.self) { type in
+                                postView(
+                                    board: boardResponse(boardId: 0, boardName: titleForPostType(type: type), creatorId: userId),
+                                    selectedBoard: $selectedBoard,
+                                    postResponseList: $postResponseList,
+                                    postDetail: $postDetail,
+                                    postId: $postId,
+                                    userId: $userId,
+                                    favoriteCount: $favoriteCount,
+                                    boardId: .constant(0),
+                                    postType: .constant(type)
+                                )
+                                .onAppear{
+                                    selectedBoard = titleForPostType(type: type)
                                 }
                             }
                             .navigationDestination(for: postResponse.self) { post in
@@ -156,7 +204,8 @@ struct ContentView: View {
                                             postId: .constant(post.postId),
                                             selectedBoard: $selectedBoard,
                                             nextFavoriteCount: .constant(post.favorite),
-                                            favoriteCount: $favoriteCount
+                                            favoriteCount: $favoriteCount,
+                                            savePostCount: $savePostCount
                                         )
                             }
                         }
@@ -168,9 +217,9 @@ struct ContentView: View {
                         Text("TabName画面 placeholder")
 
                     default:
-                        NavigationStack(path: $path){
-                            homeView(tabClick1: .constant(false), settingFlg: .constant(false), onSettingView: {
-                                path.append(Screen.setting)
+                        NavigationStack(path: $homePath){
+                            homeView(tabClick1: .constant(false), settingFlg: .constant(false), userId: $userId, homePath: $homePath, favoriteCount: $favoriteCount, onSettingView: {
+                                homePath.append(Screen.setting)
                             })
                                 .onAppear{
                                     validateToken()
@@ -178,7 +227,7 @@ struct ContentView: View {
                                 .navigationDestination(for: Screen.self){screen in
                                     switch screen {
                                         case .setting:
-                                        settingView(auth: $auth, settingFlg: .constant(false), path: $path)
+                                        settingView(auth: $auth, settingFlg: .constant(false), homePath: $homePath)
                                         default:
                                             EmptyView()
                                     }
@@ -210,7 +259,20 @@ struct ContentView: View {
     @ViewBuilder
     private func tabButton(tab: Screen, systemName: String, title: String) -> some View {
         Button {
-            currentTab = tab
+            if currentTab == tab {
+                switch tab {
+                    case .home:
+                        homePath = NavigationPath()
+                    case .timetable:
+                        timeTablePath = NavigationPath()
+                    case .board:
+                        boardPath = NavigationPath()
+                    default:
+                        break
+                }
+            } else {
+                currentTab = tab
+            }
         } label: {
             VStack {
                 Image(systemName: systemName)

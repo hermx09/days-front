@@ -60,7 +60,6 @@ struct authView: View {
                 loginCheck(idName: idName, passName: passName){result in
                     DispatchQueue.main.async {
                         if let result = result{
-                            print("帰ってきたのは: \(result)")
                             if(result){
                                 userId = idName
                                 auth = false
@@ -106,12 +105,10 @@ struct authView: View {
             sendToken(){result in
                 DispatchQueue.main.async{
                     if let result = result{
-                        print("帰ってきたのは: \(result)")
                         if(result.startFlg){
                             getUserData(userId: result.message){result in
                                 DispatchQueue.main.async{
-                                    if let result = result{
-                                        print(result)
+                                    if let result = result{                                        
                                         userName = result.userName
                                         faculty = result.faculty
                                     }

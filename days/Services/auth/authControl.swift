@@ -50,21 +50,15 @@ func loginCheck(idName: String, passName: String, completion: @escaping(Bool?) -
     }
     
     URLSession.shared.dataTask(with: request){data, response, error in
-        print("チェック開始")
         if let error = error{
             print("Error: \(error)")
             completion(nil)
             return
         }
-        
-        if let httpResponse = response as? HTTPURLResponse{
-            print("Status Code: \(httpResponse.statusCode)")
-        }
-        
+                
         if let data = data{
             do{
                 let responseData = try JSONDecoder().decode(myResponse.self, from: data)
-                print("Response: \(responseData)")
                 if let token = responseData.token{
                     if(responseData.loginFlg){
                         saveToken(token: token)
@@ -101,13 +95,9 @@ func sendToken(completion: @escaping(tokenResponse?) -> Void){
             completion(nil)
             return
         }
-        if let httpResponse = response as? HTTPURLResponse{
-            print("Status code: \(httpResponse.statusCode)")
-        }
         if let data = data{
             do{
-                let responseData = try JSONDecoder().decode(tokenResponse.self, from: data)
-                print("Response: \(responseData)")
+                let responseData = try JSONDecoder().decode(tokenResponse.self, from: data)                
                 completion(responseData)
             }catch{
                 print("Error encording response: \(error)")

@@ -7,6 +7,32 @@
 
 import SwiftUI
 
+enum PostType: Hashable {
+    case all
+    case myPosts
+    case commented
+    case saved
+    case popular
+    case favorite
+}
+
+func titleForPostType(type: PostType) -> String {
+    switch type {
+    case .all:
+        return "すべての投稿"
+    case .myPosts:
+        return "自分の投稿"
+    case .commented:
+        return "コメントした投稿"
+    case .saved:
+        return "保存した投稿"
+    case .popular:
+        return "人気投稿"
+    case .favorite:
+        return "いいねした投稿"
+    }
+}
+
 struct postView: View {
     @StateObject var favoriteManager = FavoriteManager()
     @FocusState var isAnnouncefocus: Bool
@@ -26,6 +52,7 @@ struct postView: View {
     @State var isPresentingInsertPostView = false
     @State var isPostAnonymous: Bool = false
     let board: boardResponse
+    @Binding var postType: PostType
     
     init(
             board: boardResponse,
@@ -36,6 +63,7 @@ struct postView: View {
             userId: Binding<String>,
             favoriteCount: Binding<[Int: Int]>,
             boardId: Binding<Int>,
+            postType: Binding<PostType>
         ) {
             self.board = board
             self._selectedBoard = selectedBoard
@@ -45,7 +73,7 @@ struct postView: View {
             self._userId = userId
             self._favoriteCount = favoriteCount
             self._boardId = boardId
-            // ここで @StateObject や @State の初期化は省略してOK
+            self._postType = postType
         }
     
     func bindingForFavorite(postId: Int) -> Binding<Bool> {
@@ -93,7 +121,6 @@ struct postView: View {
                                                     print("取得失敗")
                                                     return
                                                 }
-                                                print(results)
                                                 commentResponseList = results
                                                 commentCount[post.postId] = results.count
                                                 favoriteCount[post.postId] = post.favorite
@@ -103,21 +130,16 @@ struct postView: View {
                                 HStack{
                                     Button(action: {
                                         toggleFavorite(postId: post.postId, userId: userId, actionName: "favorite"){result in
-                                            print("開始")
-                                            
                                             guard let result = result else{
                                                 return
                                             }
-                                            //favoriteCount[post.postId] = (favoriteCount[post.postId] ?? 0) + (result ? 1 : -1)
                                             if(result){
                                                 favoriteCount[post.postId, default: 0] += 1
                                                 favoriteManager.isFavoriteList[post.postId] = true
-                                                //                                                isFavorite = true
                                                 nextFavoriteCount += 1
                                             }else{
                                                 favoriteCount[post.postId, default: 0] -= 1
                                                 favoriteManager.isFavoriteList[post.postId] = false
-                                                //                                                isFavorite = false
                                                 nextFavoriteCount -= 1
                                             }
                                         }
@@ -126,12 +148,6 @@ struct postView: View {
                                             .resizable()
                                             .frame(width: 8, height: 8)
                                             .foregroundColor(favoriteManager.isFavoriteList[post.postId] ?? false ? .red: .gray)
-                                        //                                        let isFavoriteTest = favoriteManager.isFavoriteList[post.postId] ?? false
-                                        //
-                                        //                                        Image(systemName: isFavoriteTest ? "heart.fill" : "heart")
-                                        //                                            .resizable()
-                                        //                                            .frame(width: 8, height: 8)
-                                        //                                            .foregroundColor(isFavoriteTest ? .red : .gray)
                                     })
                                     Text("\(favoriteCount[post.postId] ?? 0)")
                                     Image(systemName: "bubble")
@@ -155,21 +171,6 @@ struct postView: View {
                     }
                     .foregroundColor(.black)
                     .onAppear{
-                        print(post.postId)
-                        //                        isFavoriteList[post.postId] = isFavorite
-                        //                        getActionPost(userId: userId){results in
-                        //                            DispatchQueue.main.async{
-                        //                                guard let results = results else{
-                        //                                    return
-                        //                                }
-                        //                                for result in results{
-                        //                                    print("trueにするpostId", post.postId)
-                        //                                    if(result.actionName == "favorite" && result.postId == post.postId){
-                        //                                        favoriteManager.isFavoriteList[post.postId] = true
-                        //                                    }
-                        //                                }
-                        //                            }
-                        //                        }
                         getPostFavorite(postId: post.postId){result in
                             DispatchQueue.main.async{
                                 guard let result = result else{
@@ -177,14 +178,11 @@ struct postView: View {
                                 }
                                 favoriteCount[post.postId, default: 0] = result
                                 nextFavoriteCount = favoriteCount[post.postId, default: 0]
-                                print("今は", favoriteCount, "次は", nextFavoriteCount)
-                                //                                print("前どっち", isFavorite, isFavoriteList)
                             }
                         }
                     }
                 }
             }
-            
             Spacer()
             Button(action: {
                 isPresentingInsertPostView = true
@@ -202,16 +200,15 @@ struct postView: View {
                     .stroke(Color.gray.opacity(0.3), lineWidth: 1)
             )
             .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
-            .padding()
+            .padding(EdgeInsets(top: 0, leading: 16, bottom: 16, trailing: 16))
         }
         .sheet(isPresented: $isPresentingInsertPostView, onDismiss: {
-            getPosts(boardId: boardId) { results in
+            getPosts(boardId: boardId, userId: userId, postType: postType) { results in
                 DispatchQueue.main.async {
                     guard let results = results else {
                         print("取得失敗")
                         return
                     }
-                    print(results)
                     postResponseList = results
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         favoriteManager.loadFavorites(userId: userId, posts: results)
@@ -222,13 +219,12 @@ struct postView: View {
                 insertPostView(isPresentingInsertPostView: $isPresentingInsertPostView, userId: $userId, boardId: $boardId)
             }
             .onAppear{
-                getPosts(boardId: boardId) { results in
+                getPosts(boardId: boardId, userId: userId, postType: postType) { results in
                     DispatchQueue.main.async {
                         guard let results = results else {
                             print("取得失敗")
                             return
                         }
-                        print(results)
                         postResponseList = results
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                             favoriteManager.loadFavorites(userId: userId, posts: results)

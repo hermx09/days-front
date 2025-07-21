@@ -13,7 +13,6 @@ struct facultiesResponse: Codable{
 }
 
 func getFaculties(completion: @escaping([facultiesResponse]?) -> Void){
-    print("学科取得")
     
     guard let url = URL(string: "http://192.168.86.220:3000/getFaculties")else{
         return completion(nil)
@@ -31,13 +30,11 @@ func getFaculties(completion: @escaping([facultiesResponse]?) -> Void){
         }
         
         if let response = response as? HTTPURLResponse{
-            print("StatusCode: \(response.statusCode)")
         }
         
         if let data = data{
             do{
-                let responseData = try JSONDecoder().decode([facultiesResponse].self, from: data)
-                print("Response: \(responseData)")
+                let responseData = try JSONDecoder().decode([facultiesResponse].self, from: data)                
                 completion(responseData)
             }catch{
                 print("Error encording response: \(error)")

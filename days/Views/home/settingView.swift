@@ -10,15 +10,14 @@ import SwiftUI
 struct settingView: View {
     @Binding var auth: Bool
     @Binding var settingFlg: Bool
-    @Binding var path: NavigationPath
+    @Binding var homePath: NavigationPath
     var body: some View {
         VStack{
-            Button(action: {
-                print("トークン削除")
+            Button(action: {                
                 UserDefaults.standard.removeObject(forKey: "jwtToken")
                 auth = true
                 settingFlg = false
-                path.removeLast(path.count)
+                homePath.removeLast(homePath.count)
             }, label: {
                 Text("ログアウト")
                     .foregroundColor(.black)

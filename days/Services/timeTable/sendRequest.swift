@@ -18,7 +18,6 @@ struct MyResponse: Codable, Identifiable{
 
 
 func sendPostRequest(friendName: String, completion: @escaping([MyResponse]?) -> Void){
-    print("リクエスト送信")
     guard let url = URL(string: "http://192.168.86.220:3000/searchFriends")else{
         completion(nil)
         return}
@@ -44,16 +43,11 @@ func sendPostRequest(friendName: String, completion: @escaping([MyResponse]?) ->
             print("Error: \(error)")
             completion(nil)
             return
-        }
-        
-        if let httpResponse = response as? HTTPURLResponse{
-            print("Status code: \(httpResponse.statusCode)")
-        }
+        }                
         
         if let data = data{
             do{
-                let responseData = try JSONDecoder().decode([MyResponse].self, from: data)
-                print("Response: \(responseData)")
+                let responseData = try JSONDecoder().decode([MyResponse].self, from: data)                
                 completion(responseData)
             }catch{
                 print("Error decoding response: \(error)")

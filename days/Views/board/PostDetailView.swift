@@ -24,6 +24,8 @@ struct PostDetailView: View {
     @State var isResponseCommentFavoriteList : [Int: Bool] = [:]
     @State var isCommentAnonymous = false
     @Binding var favoriteCount: [Int: Int]
+    @Binding var savePostCount: [Int: Int]
+    @State var isSavePost: Bool = false
     
     var body: some View {
         
@@ -50,8 +52,6 @@ struct PostDetailView: View {
                     HStack{
                         Button(action: {
                             toggleFavorite(postId: postId, userId: userId, actionName: "favorite"){result in
-                                print("開始")
-                                
                                 guard let result = result else{
                                     return
                                 }
@@ -72,37 +72,101 @@ struct PostDetailView: View {
                         Text("\(favoriteCount[postId, default: 0])")
                         Image(systemName: "bubble")
                         Text("\(commentResponseList.count)")
-                        Image(systemName: "star")
+                        Button(action: {
+                            toggleSavePost(postId: postId, userId: userId, actionName: "save"){result in
+                                guard let result = result else{
+                                    return
+                                }
+                                if(result){
+                                    isSavePost = true
+                                    savePostCount[postId, default: 0] += 1
+                                }else{
+                                    isSavePost = false
+                                    savePostCount[postId, default: 0] -= 1
+                                }
+                            }
+                        }, label: {
+                            Image(systemName: isSavePost ? "star.fill" : "star")
+                                .foregroundColor(.daysYellow)
+                        })
+                        Text("\(savePostCount[postId] ?? 0)")
+                            .onAppear {
+                                if (savePostCount[postId] == 0 || savePostCount[postId] == nil) {
+                                    getSavePostCount(postId: postId){result in
+                                        DispatchQueue.main.async{
+                                            guard let result = result else{
+                                                return
+                                            }
+                                            if(result > 0){
+                                                savePostCount[postId] = result
+                                            }
+                                        }
+                                    }
+                                }
+                                if(savePostCount[postId] == 0){
+                                    return
+                                }
+                                isPostSaved(userId: userId, postId: postId, actionName: "save"){result in
+                                    DispatchQueue.main.async{
+                                        guard let result = result else{
+                                            return
+                                        }
+                                        if(!result){
+                                            return
+                                        }
+                                        isSavePost = true
+                                    }
+                                }
+                            }
                     }
                 }
                 .padding(EdgeInsets(top: 30, leading: 30, bottom: 10, trailing: 30))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.caption)
                 ScrollView{
-                    ForEach(commentResponseList){comment in
-                        CommentView(comment: comment, targetCommentId: $targetCommentId, isFocused: $focus, isCommentFavoriteList: $favoriteManager.isCommentFavoriteList, isResponseCommentFavoriteList: $favoriteManager.isResponseCommentFavoriteList, userId: $userId)
-                    }
-                    .onAppear{
-                        getActionComment(userId: userId){results in
-                            DispatchQueue.main.async{
-                                guard let results = results else{
-                                    return
-                                }
-                                for result in results {
-                                    if(result.actionName == "favorite"){
-                                        favoriteManager.isCommentFavoriteList[result.commentId] = true
+                    if (commentResponseList.isEmpty) {
+                            // コメントがなければ真ん中にテキストを表示
+                        VStack {
+                            Spacer()
+                            Image(systemName: "message")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 80, height: 80)
+                                .foregroundColor(.gray)
+                            Text("初コメントを残してください")
+                                .foregroundColor(.gray)
+                                .font(.headline)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else {
+                        ForEach(commentResponseList){comment in
+                            CommentView(comment: comment, targetCommentId: $targetCommentId, isFocused: $focus, isCommentFavoriteList: $favoriteManager.isCommentFavoriteList, isResponseCommentFavoriteList: $favoriteManager.isResponseCommentFavoriteList, userId: $userId)
+                        }
+                        .onAppear{
+                            getActionComment(userId: userId){results in
+                                DispatchQueue.main.async{
+                                    guard let results = results else{
+                                        return
+                                    }
+                                    for result in results {
+                                        if(result.actionName == "favorite"){
+                                            favoriteManager.isCommentFavoriteList[result.commentId] = true
+                                        }
                                     }
                                 }
                             }
-                        }
-                        getActionResponseComment(userId: userId){results in
-                            DispatchQueue.main.async{
-                                guard let results = results else{
-                                    return
-                                }
-                                for result in results {
-                                    if(result.actionName == "favorite"){
-                                        favoriteManager.isResponseCommentFavoriteList[result.responseCommentId] = true
+                            getActionResponseComment(userId: userId){results in
+                                DispatchQueue.main.async{
+                                    guard let results = results else{
+                                        return
+                                    }
+                                    for result in results {
+                                        if(result.actionName == "favorite"){
+                                            favoriteManager.isResponseCommentFavoriteList[result.responseCommentId] = true
+                                        }
                                     }
                                 }
                             }
@@ -134,7 +198,6 @@ struct PostDetailView: View {
                             insertComment(commentMessage: commentMessage, commenterId: userId, postId: postDetail.postId, targetCommentId: targetCommentId, isAnonymous: isCommentAnonymous){result in
                                 DispatchQueue.main.async{
                                     targetCommentId = 0
-                                    print(result)
                                     commentMessage = ""
                                     getComments(postId: postId){results in
                                         DispatchQueue.main.async{
@@ -159,8 +222,7 @@ struct PostDetailView: View {
                                 }
                         insertComment(commentMessage: commentMessage, commenterId: userId, postId: postDetail.postId, targetCommentId: targetCommentId, isAnonymous: isCommentAnonymous){result in
                             DispatchQueue.main.async{
-                                targetCommentId = 0
-                                print(result)
+                                targetCommentId = 0                                
                                 commentMessage = ""
                                 getComments(postId: postId){results in
                                     DispatchQueue.main.async{
@@ -195,6 +257,9 @@ struct PostDetailView: View {
                     }
                     isFavorite = results.contains { result in
                         result.postId == postId && result.actionName == "favorite"
+                    }
+                    isSavePost = results.contains { result in
+                        result.postId == postId && result.actionName == "post"
                     }
                 }
             }

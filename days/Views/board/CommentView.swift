@@ -21,8 +21,7 @@ struct CommentView: View {
                     Spacer()
                     HStack {
                         Button(action: {
-                            toggleFavorite(commentId: comment.commentId, userId: userId, actionName: "favorite"){result in
-                                print("開始")
+                            toggleFavorite(commentId: comment.commentId, userId: userId, actionName: "favorite"){result in                                
                                 
                                 guard let result = result else{
                                     return
@@ -102,9 +101,6 @@ struct CommentView: View {
                                             .padding(5)
                                             .foregroundColor((isResponseCommentFavoriteList[responseComment.responseCommentId] ?? false) ? .red: .gray)
                                     })
-                                    .onAppear{
-                                        print("リストは", isResponseCommentFavoriteList)
-                                    }
                                     Divider()
                                         .frame(height: 24)
                                         .background(Color.gray.opacity(0.3))

@@ -216,8 +216,7 @@ struct addLectureView: View {
                             .onAppear{
                                 getPlaces(){ results in
                                     DispatchQueue.main.async{
-                                        if let result = results{
-                                            print(result)
+                                        if let result = results{                                            
                                             places.insert(contentsOf: result.map{$0.placeName}, at: 1)
                                         }else{
                                             print("キャンパスデータの取得に失敗")

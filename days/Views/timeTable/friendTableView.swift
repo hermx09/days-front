@@ -80,8 +80,7 @@ struct friendTableView: View {
                         print("取得失敗")
                         return
                     }
-                    DispatchQueue.main.async{
-                        print("帰ってきたのは:\(results)")
+                    DispatchQueue.main.async{                        
                         for result in results {
                             tables.append(timeTalbes(lectureTime: result.lectureTime, lectureName: result.lectureName, teacherName: result.teacherName, roomNum: result.roomNum, day: result.day))
                         }

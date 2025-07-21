@@ -54,7 +54,6 @@ public func toggleFavorite(postId: Int? = nil, commentId: Int? = nil, responseCo
     }
     
     APIRequest.postRequest(endPoint: "/toggleFavorite", body: jsonData){(result: Result<toggleFavoriteResponse, Error>) in
-        print("最初の結果", result)
             switch result {
                     case .success(let response):
                             completion(response.result)  // result (Bool) を返す

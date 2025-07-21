@@ -46,16 +46,10 @@ func getUserLectures(userId: String, completion: @escaping([responseUserLectures
             completion(nil)
             return
         }
-        
-        if let httpResponse = response as? HTTPURLResponse{
-            print("StatusCode: \(httpResponse.statusCode)")
-        }
-        
+                    
         do{
             if let data = data{
-                print("data: \(data)")
-                let responseData = try JSONDecoder().decode([responseUserLectures].self, from: data)
-                print("Response: \(responseData)")
+                let responseData = try JSONDecoder().decode([responseUserLectures].self, from: data)                
                 completion(responseData)
             }
         }catch{

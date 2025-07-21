@@ -29,14 +29,12 @@ func getBoards(completion: @escaping([boardResponse]?) -> Void){
         }
         
         if let response = response as? HTTPURLResponse{
-            print("StatusCode: \(response.statusCode)")
         }
         
         if let data = data{
             print(data)
             do{
                 let responseData = try JSONDecoder().decode([boardResponse].self, from: data)
-                print("Response: \(responseData)")
                 completion(responseData)
             }catch{
                 print("Error encording response: \(error)")

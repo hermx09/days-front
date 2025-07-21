@@ -38,16 +38,10 @@ func getUserData(userId: String, completion: @escaping(userDataResponse?) -> Voi
             completion(nil)
             return
         }
-        
-        if let httpResponse = response as? HTTPURLResponse{
-            print("StatusCode: \(httpResponse.statusCode)")
-        }
-        
+                
         do{
             if let data = data{
-                print("data: \(data)")
                 let responseData = try JSONDecoder().decode(userDataResponse.self, from: data)
-                print("Response: \(responseData)")
                 completion(responseData)
             }
         }catch{

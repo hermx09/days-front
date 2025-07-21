@@ -7,9 +7,9 @@
 
 import Foundation
 
-public func getPostFavorite(postId: Int,completion: @escaping(Int?) -> Void){
+public func getSavePostCount(postId: Int,completion: @escaping(Int?) -> Void){
     let queryItems = [URLQueryItem(name: "postId", value: String(postId))]
-    APIRequest.getRequest(endPoint: "/getPostFavorite", queryItems: queryItems){(result: Result<Int, Error>) in
+    APIRequest.getRequest(endPoint: "/getSavePostCount", queryItems: queryItems){(result: Result<Int, Error>) in
         switch result{
         case .success(let success):
             completion(success)

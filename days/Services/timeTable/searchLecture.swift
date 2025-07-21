@@ -24,7 +24,7 @@ struct lectureResponse: Codable, Equatable, Identifiable{
 }
 
 func searchLecture(faculty: String, year: String, springFlg: Bool, autumnFlg: Bool, day: String, period: Int, lectureName: String, teacherName: String, place: String, completion: @escaping([lectureResponse]?) -> Void){
-    print("検索送信")
+    
     var components = URLComponents(string: "http://192.168.86.220:3000/searchLecture")
         
         components?.queryItems = [
@@ -56,17 +56,11 @@ func searchLecture(faculty: String, year: String, springFlg: Bool, autumnFlg: Bo
             print("Error: \(err)")
             completion(nil)
             return
-        }
-        
-        if let httpResponse = response as? HTTPURLResponse{
-            print("StatusCode: \(httpResponse.statusCode)")
-        }
+        }                
         
         do{
             if let data = data{
-                print("data: \(data)")
-                let responseData = try JSONDecoder().decode([lectureResponse].self, from: data)
-                print("Response: \(responseData)")
+                let responseData = try JSONDecoder().decode([lectureResponse].self, from: data)                
                 completion(responseData)
             }
         }catch{

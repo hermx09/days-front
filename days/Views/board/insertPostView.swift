@@ -28,8 +28,7 @@ struct insertPostView: View {
                 Spacer()
                 Button(action: {
                     insertPost(title: insertPostTitle, message: insertPostBody, isAnonymous: isPostAnonymous, userId: userId, boardId: boardId){result in
-                        DispatchQueue.main.async{
-                            print(result)
+                        DispatchQueue.main.async{                            
                             isPresentingInsertPostView = false
                         }
                     }

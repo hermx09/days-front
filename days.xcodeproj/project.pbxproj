@@ -12,6 +12,13 @@
 		B0424E212E1C10F3004EF559 /* CommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0424E202E1C10F3004EF559 /* CommentView.swift */; };
 		B0424E232E1EAEC2004EF559 /* getActionComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0424E222E1EAEC2004EF559 /* getActionComment.swift */; };
 		B0424E252E1EB057004EF559 /* getActionResponseComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0424E242E1EB057004EF559 /* getActionResponseComment.swift */; };
+		B0424E272E2ABEE7004EF559 /* toggleSavePost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0424E262E2ABEE7004EF559 /* toggleSavePost.swift */; };
+		B0424E292E2AC396004EF559 /* getSavePostCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0424E282E2AC396004EF559 /* getSavePostCount.swift */; };
+		B0424E2E2E2ACB24004EF559 /* colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0424E2D2E2ACB24004EF559 /* colors.swift */; };
+		B0424E322E2D0406004EF559 /* isPostSaved.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0424E312E2D0406004EF559 /* isPostSaved.swift */; };
+		B0424E352E2E57FE004EF559 /* UINavigationController+SwipeBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0424E342E2E57FE004EF559 /* UINavigationController+SwipeBack.swift */; };
+		B0424E382E2E623C004EF559 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0424E372E2E623C004EF559 /* SearchBarView.swift */; };
+		B05582FD2E2E66E2007F3395 /* SearchBoards.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05582FC2E2E66E2007F3395 /* SearchBoards.swift */; };
 		B07EFF6D2C95E53B00B12717 /* homeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B07EFF6C2C95E53B00B12717 /* homeView.swift */; };
 		B07EFF6F2C95E9D100B12717 /* timeTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B07EFF6E2C95E9D100B12717 /* timeTableView.swift */; };
 		B07EFF732C9C95A900B12717 /* boardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B07EFF722C9C95A900B12717 /* boardView.swift */; };
@@ -68,6 +75,13 @@
 		B0424E202E1C10F3004EF559 /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
 		B0424E222E1EAEC2004EF559 /* getActionComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getActionComment.swift; sourceTree = "<group>"; };
 		B0424E242E1EB057004EF559 /* getActionResponseComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getActionResponseComment.swift; sourceTree = "<group>"; };
+		B0424E262E2ABEE7004EF559 /* toggleSavePost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toggleSavePost.swift; sourceTree = "<group>"; };
+		B0424E282E2AC396004EF559 /* getSavePostCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getSavePostCount.swift; sourceTree = "<group>"; };
+		B0424E2D2E2ACB24004EF559 /* colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = colors.swift; sourceTree = "<group>"; };
+		B0424E312E2D0406004EF559 /* isPostSaved.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isPostSaved.swift; sourceTree = "<group>"; };
+		B0424E342E2E57FE004EF559 /* UINavigationController+SwipeBack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+SwipeBack.swift"; sourceTree = "<group>"; };
+		B0424E372E2E623C004EF559 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
+		B05582FC2E2E66E2007F3395 /* SearchBoards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBoards.swift; sourceTree = "<group>"; };
 		B07EFF6C2C95E53B00B12717 /* homeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = homeView.swift; sourceTree = "<group>"; };
 		B07EFF6E2C95E9D100B12717 /* timeTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = timeTableView.swift; sourceTree = "<group>"; };
 		B07EFF722C9C95A900B12717 /* boardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = boardView.swift; sourceTree = "<group>"; };
@@ -117,6 +131,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B0424E2C2E2ACB08004EF559 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B0424E2D2E2ACB24004EF559 /* colors.swift */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		B0424E332E2E57D0004EF559 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B0424E342E2E57FE004EF559 /* UINavigationController+SwipeBack.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		B0424E362E2E6223004EF559 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				B0424E372E2E623C004EF559 /* SearchBarView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		B07EFFA12CFF4A6200B12717 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -190,6 +228,10 @@
 				B0424E1E2E1C0A55004EF559 /* getResponseComments.swift */,
 				B0424E222E1EAEC2004EF559 /* getActionComment.swift */,
 				B0424E242E1EB057004EF559 /* getActionResponseComment.swift */,
+				B0424E262E2ABEE7004EF559 /* toggleSavePost.swift */,
+				B0424E282E2AC396004EF559 /* getSavePostCount.swift */,
+				B0424E312E2D0406004EF559 /* isPostSaved.swift */,
+				B05582FC2E2E66E2007F3395 /* SearchBoards.swift */,
 			);
 			path = board;
 			sourceTree = "<group>";
@@ -260,6 +302,9 @@
 		B0CC0E992C7613C600D2B168 /* days */ = {
 			isa = PBXGroup;
 			children = (
+				B0424E362E2E6223004EF559 /* Components */,
+				B0424E332E2E57D0004EF559 /* Extensions */,
+				B0424E2C2E2ACB08004EF559 /* Resources */,
 				B07EFFA52CFF534E00B12717 /* Services */,
 				B07EFFA12CFF4A6200B12717 /* Views */,
 				B0CC0E9E2C7613C800D2B168 /* Assets.xcassets */,
@@ -369,10 +414,13 @@
 				B07EFF7B2CB0801000B12717 /* authView.swift in Sources */,
 				B07EFF792CAB271A00B12717 /* ModalView.swift in Sources */,
 				B07EFF6F2C95E9D100B12717 /* timeTableView.swift in Sources */,
+				B0424E352E2E57FE004EF559 /* UINavigationController+SwipeBack.swift in Sources */,
 				B0424E212E1C10F3004EF559 /* CommentView.swift in Sources */,
 				B07EFF912CC64F7C00B12717 /* getUserData.swift in Sources */,
 				B07EFF872CBB700900B12717 /* searchLectureResult.swift in Sources */,
 				B0424E252E1EB057004EF559 /* getActionResponseComment.swift in Sources */,
+				B0424E272E2ABEE7004EF559 /* toggleSavePost.swift in Sources */,
+				B0424E322E2D0406004EF559 /* isPostSaved.swift in Sources */,
 				B09626262D540593009FB7C6 /* getPostFavorite.swift in Sources */,
 				B07EFFA02CFF4A1B00B12717 /* PostDetailView.swift in Sources */,
 				B07EFF972CC6DC9800B12717 /* postView.swift in Sources */,
@@ -381,11 +429,15 @@
 				B096262C2D700B63009FB7C6 /* insertPostView.swift in Sources */,
 				B0424E232E1EAEC2004EF559 /* getActionComment.swift in Sources */,
 				B07EFFAC2D13352A00B12717 /* daysFrontUtil.swift in Sources */,
+				B0424E292E2AC396004EF559 /* getSavePostCount.swift in Sources */,
 				B07EFF7D2CB1A8BE00B12717 /* authControl.swift in Sources */,
 				B07EFF892CBE13EA00B12717 /* registerLecture.swift in Sources */,
+				B05582FD2E2E66E2007F3395 /* SearchBoards.swift in Sources */,
 				B09626202D53BE61009FB7C6 /* getActionPost.swift in Sources */,
 				B0424E1F2E1C0A55004EF559 /* getResponseComments.swift in Sources */,
+				B0424E2E2E2ACB24004EF559 /* colors.swift in Sources */,
 				B07EFF852CB57D4200B12717 /* searchLecture.swift in Sources */,
+				B0424E382E2E623C004EF559 /* SearchBarView.swift in Sources */,
 				B07EFFAE2D133FBF00B12717 /* GetComments.swift in Sources */,
 				B096261D2D43E455009FB7C6 /* PostHeader.swift in Sources */,
 				B07EFF952CC6BFCF00B12717 /* getPosts.swift in Sources */,

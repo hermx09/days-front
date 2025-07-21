@@ -10,7 +10,12 @@ import SwiftUI
 struct homeView: View {
     @Binding var tabClick1: Bool
     @Binding var settingFlg: Bool
+    @Binding var userId: String
+    @Binding var homePath: NavigationPath
+    @Binding var favoriteCount: [Int: Int]
     var onSettingView: () -> Void
+    @State var commentCountList: [Int:Int] = [:]
+    @State var boardNameList: [Int: String] = [:]
     @State var boardList =
     [
         addBoards(title: "自由掲示板", contents: "内容"),
@@ -20,11 +25,7 @@ struct homeView: View {
         addBoards(title:"恋愛掲示板",contents: "内容"),
         addBoards(title:"物販掲示板",contents: "内容")
     ]
-    @State var favoriteBoardList =
-    [
-    addFavoriteBoards(userName: "匿名", title: "題名", content: "内容", boardName: "自由掲示板", heartCnt: 30, bubbleCnt: 10),
-     addFavoriteBoards(userName: "匿名", title: "題名", content: "内容", boardName: "自由掲示板", heartCnt: 30, bubbleCnt: 10)
-    ]
+    @State var favoritePostList: [postResponse] = []
     @State var lectureList =
     [
     addLectures(star: 5, lectureName: "政治体制論", teacherName: "外池 力", middle: false, last: true, bring: true, text: "内容", time: "2023/09/14"),
@@ -75,8 +76,7 @@ struct homeView: View {
                     Button(action: {
                         tabClick1 = false
                         settingFlg = true
-                        onSettingView()
-                        print("tab1: \(tabClick1), setting: \(settingFlg)")
+                        onSettingView()                        
                     }, label: {
                         Image(systemName: "person.circle")
                             .resizable()
@@ -216,7 +216,9 @@ struct homeView: View {
                 })
                 .foregroundColor(.black)
                 
-                Button(action: {},
+                Button(action: {
+                    homePath.append(PostType.popular)
+                },
                        label: {
                     HStack{
                         Image(systemName: "music.note")
@@ -234,15 +236,21 @@ struct homeView: View {
                 })
                 .padding(5)
                 
-                ForEach(favoriteBoardList){favorite in
-                    favoriteBoard(
-                        userName: favorite.userName,
-                        title: favorite.title,
-                        content: favorite.content,
-                        boardName: favorite.boardName,
-                        heartCnt: favorite.heartCnt,
-                        bubbleCnt: favorite.bubbleCnt
-                    )
+                ForEach(favoritePostList){favorite in
+                    Button(action: {
+                        homePath.append(favorite)
+                    }, label: {
+                        favoritePost(
+                            userName: favorite.posterId,
+                            title: favorite.postTitle,
+                            content: favorite.postMessage,
+                            boardName: boardNameList[favorite.postId] ?? "",
+                            heartCnt: favorite.favorite,
+                            bubbleCnt: commentCountList[favorite.postId] ?? 0,
+                            createdAt: favorite.createdAt
+                        )
+                    })
+                    .foregroundColor(.black)
                 }
                 Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/, label: {
                     HStack{
@@ -319,6 +327,33 @@ struct homeView: View {
                 }
             }
             .padding(20)
+            .onAppear{
+                getPosts(boardId: 0, userId: userId, postType: .popular) { results in
+                    DispatchQueue.main.async {
+                        guard let results = results else {
+                            print("取得失敗")
+                            return
+                        }
+                        favoritePostList = results
+                        for post in results{
+                            favoriteCount[post.postId] = post.favorite
+                        }
+                        print(favoritePostList)
+                    }
+                }
+                getPostsInfoForHome(){results in
+                    DispatchQueue.main.async {
+                        guard let results = results else {
+                            print("取得失敗")
+                            return
+                        }
+                        for postInfo in results {
+                            boardNameList[postInfo.postId] = postInfo.boardName
+                            commentCountList[postInfo.postId] = postInfo.commentCount
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -341,16 +376,17 @@ struct boardDisplay: View{
     }
 }
 
-struct favoriteBoard: View{
+struct favoritePost: View{
     var userName : String
     var title: String
     var content: String
     var boardName: String
     var heartCnt: Int
     var bubbleCnt: Int
+    var createdAt: String
     
     var body: some View{
-        Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/, label: {
+        
             HStack{
                 VStack{
                     HStack{
@@ -358,6 +394,9 @@ struct favoriteBoard: View{
                         Text(userName)
                             .font(.caption)
                         Spacer()
+                        Text(createdAt)
+                            .font(.caption2)
+                            .fontWeight(.light)
                     }
                     .padding(.leading,5)
                     HStack{
@@ -379,7 +418,7 @@ struct favoriteBoard: View{
                             .font(.caption2)
                             .fontWeight(.light)
                         Spacer()
-                        Image(systemName: "heart.fill")
+                        Image(systemName: "heart")
                             .resizable()
                             .frame(width: 8, height: 8)
                             .foregroundColor(.red)
@@ -401,8 +440,6 @@ struct favoriteBoard: View{
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(red: 0.9, green: 0.9, blue: 0.9), lineWidth: 2))
             .background(Color(red: 0.9, green: 0.9, blue: 0.9), in :
                             RoundedRectangle(cornerRadius: 10))
-        })
-        .foregroundColor(.black)
     }
     
 }
@@ -584,13 +621,14 @@ struct addBoards: Identifiable{
     var id = UUID()
 }
 
-struct addFavoriteBoards: Identifiable{
+struct addFavoritePosts: Identifiable{
     var userName: String
     var title: String
     var content: String
     var boardName : String
     var heartCnt: Int
     var bubbleCnt: Int
+    var createdAt: String
     var id = UUID()
 }
 

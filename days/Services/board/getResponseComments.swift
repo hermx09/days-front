@@ -23,8 +23,7 @@ func getResponseComments(commentId: Int, completion: @escaping([responseCommentR
     let queryItems = [URLQueryItem(name: "commentId", value: String(commentId))]
     APIRequest.getRequest(endPoint: "/getResponseComments", queryItems: queryItems){(result: Result<[responseCommentResponse], Error>) in
         switch result{
-        case .success(let comments):
-            print("成功", comments)
+        case .success(let comments):            
             completion(comments)
         case .failure(let error):
             print("エラー: \(error)")

@@ -28,7 +28,6 @@ struct InsertCommentResponse: Codable, Equatable, Identifiable{
 }
 
 func insertComment(commentMessage: String, commenterId: String, postId: Int, targetCommentId: Int, isAnonymous: Bool, completion: @escaping(String) -> Void){
-    print("匿名は", isAnonymous)
     var jsonData: Data?
     var endPoint = "/insertComment"
     if(targetCommentId != 0){

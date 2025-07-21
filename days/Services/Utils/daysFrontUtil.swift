@@ -29,8 +29,7 @@ struct APIRequest{
             
             if let data = data{
                 
-                if let responseString = String(data: data, encoding: .utf8) {
-                            print("Response Data: \(responseString)")  // 文字列形式でレスポンスを表示
+                if let responseString = String(data: data, encoding: .utf8) {                            
                         }
                 
                 do{
@@ -69,8 +68,7 @@ struct APIRequest{
                         completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No data received"])))
                         return
             }
-            if let responseString = String(data: data, encoding: .utf8) {
-                print("Response Data: \(responseString)")
+            if let responseString = String(data: data, encoding: .utf8) {                
             }
                 
             do{
