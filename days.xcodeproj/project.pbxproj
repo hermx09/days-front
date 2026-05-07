@@ -19,6 +19,39 @@
 		B0424E352E2E57FE004EF559 /* UINavigationController+SwipeBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0424E342E2E57FE004EF559 /* UINavigationController+SwipeBack.swift */; };
 		B0424E382E2E623C004EF559 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0424E372E2E623C004EF559 /* SearchBarView.swift */; };
 		B05582FD2E2E66E2007F3395 /* SearchBoards.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05582FC2E2E66E2007F3395 /* SearchBoards.swift */; };
+		B05583002E2FC017007F3395 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05582FF2E2FC017007F3395 /* ChatView.swift */; };
+		B05583032E2FDF7A007F3395 /* GroupChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583022E2FDF7A007F3395 /* GroupChatViewModel.swift */; };
+		B05583062E2FDFC6007F3395 /* GetGroupChats.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583052E2FDFC6007F3395 /* GetGroupChats.swift */; };
+		B05583082E351E89007F3395 /* PersonalChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583072E351E89007F3395 /* PersonalChatViewModel.swift */; };
+		B055830A2E351ECA007F3395 /* GetPersonalChats.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583092E351ECA007F3395 /* GetPersonalChats.swift */; };
+		B055830C2E352E08007F3395 /* ChatRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B055830B2E352E08007F3395 /* ChatRoomView.swift */; };
+		B055830E2E3540CF007F3395 /* ChatRoomViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B055830D2E3540CF007F3395 /* ChatRoomViewModel.swift */; };
+		B05583102E354101007F3395 /* GetChatMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = B055830F2E354101007F3395 /* GetChatMessages.swift */; };
+		B05583122E354133007F3395 /* InserChattMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583112E354133007F3395 /* InserChattMessage.swift */; };
+		B05583142E355C00007F3395 /* MarkMessagesAsRead.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583132E355C00007F3395 /* MarkMessagesAsRead.swift */; };
+		B05583162E35E530007F3395 /* GrowingTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583152E35E530007F3395 /* GrowingTextEditor.swift */; };
+		B05583192E35FEDD007F3395 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583182E35FED3007F3395 /* UIApplication.swift */; };
+		B055831B2E36021B007F3395 /* InsertGroupChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = B055831A2E36021B007F3395 /* InsertGroupChat.swift */; };
+		B055831D2E37B1EA007F3395 /* InsertOrGetPersonalChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = B055831C2E37B1EA007F3395 /* InsertOrGetPersonalChat.swift */; };
+		B055831F2E3BAC54007F3395 /* blockUserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B055831E2E3BAC54007F3395 /* blockUserService.swift */; };
+		B05583212E3FB3A2007F3395 /* GetDMPartner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583202E3FB3A2007F3395 /* GetDMPartner.swift */; };
+		B05583232E42541A007F3395 /* SearchGroupChats.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583222E42541A007F3395 /* SearchGroupChats.swift */; };
+		B05583262E44F530007F3395 /* CheckPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583252E44F530007F3395 /* CheckPolicyView.swift */; };
+		B05583292E44FDBB007F3395 /* SchoolSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583282E44FDBB007F3395 /* SchoolSelectionView.swift */; };
+		B055832B2E44FE59007F3395 /* PhoneVerificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B055832A2E44FE59007F3395 /* PhoneVerificationView.swift */; };
+		B055832D2E44FE94007F3395 /* RegisterUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B055832C2E44FE94007F3395 /* RegisterUserView.swift */; };
+		B055832F2E47B250007F3395 /* SchoolSelectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B055832E2E47B250007F3395 /* SchoolSelectionViewModel.swift */; };
+		B05583312E4871C1007F3395 /* AuthUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583302E4871C1007F3395 /* AuthUserView.swift */; };
+		B05583332E48788D007F3395 /* AuthNewStudentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583322E48788D007F3395 /* AuthNewStudentView.swift */; };
+		B05583352E487898007F3395 /* AuthCurrentStudentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583342E487898007F3395 /* AuthCurrentStudentView.swift */; };
+		B05583372E4878B1007F3395 /* AuthGraduateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583362E4878B1007F3395 /* AuthGraduateView.swift */; };
+		B055833A2E487904007F3395 /* InsertUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583392E487904007F3395 /* InsertUser.swift */; };
+		B055833C2E5DFFBA007F3395 /* SearchAllBoards.swift in Sources */ = {isa = PBXBuildFile; fileRef = B055833B2E5DFFBA007F3395 /* SearchAllBoards.swift */; };
+		B055833E2E75D573007F3395 /* NotificationUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = B055833D2E75D573007F3395 /* NotificationUtil.swift */; };
+		B05583422E75E075007F3395 /* NotificationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583412E75E075007F3395 /* NotificationListView.swift */; };
+		B05583442EB8D1C9007F3395 /* ScrollCommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583432EB8D1C9007F3395 /* ScrollCommentView.swift */; };
+		B05583462FACB1D9007F3395 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583452FACB1D4007F3395 /* Config.swift */; };
+		B05583492FACDE09007F3395 /* PostDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05583482FACDE01007F3395 /* PostDetailViewModel.swift */; };
 		B07EFF6D2C95E53B00B12717 /* homeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B07EFF6C2C95E53B00B12717 /* homeView.swift */; };
 		B07EFF6F2C95E9D100B12717 /* timeTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B07EFF6E2C95E9D100B12717 /* timeTableView.swift */; };
 		B07EFF732C9C95A900B12717 /* boardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B07EFF722C9C95A900B12717 /* boardView.swift */; };
@@ -82,6 +115,39 @@
 		B0424E342E2E57FE004EF559 /* UINavigationController+SwipeBack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+SwipeBack.swift"; sourceTree = "<group>"; };
 		B0424E372E2E623C004EF559 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		B05582FC2E2E66E2007F3395 /* SearchBoards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBoards.swift; sourceTree = "<group>"; };
+		B05582FF2E2FC017007F3395 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		B05583022E2FDF7A007F3395 /* GroupChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupChatViewModel.swift; sourceTree = "<group>"; };
+		B05583052E2FDFC6007F3395 /* GetGroupChats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGroupChats.swift; sourceTree = "<group>"; };
+		B05583072E351E89007F3395 /* PersonalChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalChatViewModel.swift; sourceTree = "<group>"; };
+		B05583092E351ECA007F3395 /* GetPersonalChats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPersonalChats.swift; sourceTree = "<group>"; };
+		B055830B2E352E08007F3395 /* ChatRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomView.swift; sourceTree = "<group>"; };
+		B055830D2E3540CF007F3395 /* ChatRoomViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomViewModel.swift; sourceTree = "<group>"; };
+		B055830F2E354101007F3395 /* GetChatMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetChatMessages.swift; sourceTree = "<group>"; };
+		B05583112E354133007F3395 /* InserChattMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InserChattMessage.swift; sourceTree = "<group>"; };
+		B05583132E355C00007F3395 /* MarkMessagesAsRead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkMessagesAsRead.swift; sourceTree = "<group>"; };
+		B05583152E35E530007F3395 /* GrowingTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowingTextEditor.swift; sourceTree = "<group>"; };
+		B05583182E35FED3007F3395 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
+		B055831A2E36021B007F3395 /* InsertGroupChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsertGroupChat.swift; sourceTree = "<group>"; };
+		B055831C2E37B1EA007F3395 /* InsertOrGetPersonalChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsertOrGetPersonalChat.swift; sourceTree = "<group>"; };
+		B055831E2E3BAC54007F3395 /* blockUserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = blockUserService.swift; sourceTree = "<group>"; };
+		B05583202E3FB3A2007F3395 /* GetDMPartner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetDMPartner.swift; sourceTree = "<group>"; };
+		B05583222E42541A007F3395 /* SearchGroupChats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchGroupChats.swift; sourceTree = "<group>"; };
+		B05583252E44F530007F3395 /* CheckPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckPolicyView.swift; sourceTree = "<group>"; };
+		B05583282E44FDBB007F3395 /* SchoolSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolSelectionView.swift; sourceTree = "<group>"; };
+		B055832A2E44FE59007F3395 /* PhoneVerificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneVerificationView.swift; sourceTree = "<group>"; };
+		B055832C2E44FE94007F3395 /* RegisterUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterUserView.swift; sourceTree = "<group>"; };
+		B055832E2E47B250007F3395 /* SchoolSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchoolSelectionViewModel.swift; sourceTree = "<group>"; };
+		B05583302E4871C1007F3395 /* AuthUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthUserView.swift; sourceTree = "<group>"; };
+		B05583322E48788D007F3395 /* AuthNewStudentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthNewStudentView.swift; sourceTree = "<group>"; };
+		B05583342E487898007F3395 /* AuthCurrentStudentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthCurrentStudentView.swift; sourceTree = "<group>"; };
+		B05583362E4878B1007F3395 /* AuthGraduateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthGraduateView.swift; sourceTree = "<group>"; };
+		B05583392E487904007F3395 /* InsertUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsertUser.swift; sourceTree = "<group>"; };
+		B055833B2E5DFFBA007F3395 /* SearchAllBoards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchAllBoards.swift; sourceTree = "<group>"; };
+		B055833D2E75D573007F3395 /* NotificationUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationUtil.swift; sourceTree = "<group>"; };
+		B05583412E75E075007F3395 /* NotificationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationListView.swift; sourceTree = "<group>"; };
+		B05583432EB8D1C9007F3395 /* ScrollCommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollCommentView.swift; sourceTree = "<group>"; };
+		B05583452FACB1D4007F3395 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		B05583482FACDE01007F3395 /* PostDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailViewModel.swift; sourceTree = "<group>"; };
 		B07EFF6C2C95E53B00B12717 /* homeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = homeView.swift; sourceTree = "<group>"; };
 		B07EFF6E2C95E9D100B12717 /* timeTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = timeTableView.swift; sourceTree = "<group>"; };
 		B07EFF722C9C95A900B12717 /* boardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = boardView.swift; sourceTree = "<group>"; };
@@ -155,9 +221,89 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		B05582FE2E2FBFF6007F3395 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				B05582FF2E2FC017007F3395 /* ChatView.swift */,
+				B055830B2E352E08007F3395 /* ChatRoomView.swift */,
+				B05583152E35E530007F3395 /* GrowingTextEditor.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
+		B05583012E2FDF55007F3395 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				B05583022E2FDF7A007F3395 /* GroupChatViewModel.swift */,
+				B05583072E351E89007F3395 /* PersonalChatViewModel.swift */,
+				B055830D2E3540CF007F3395 /* ChatRoomViewModel.swift */,
+				B055832E2E47B250007F3395 /* SchoolSelectionViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		B05583042E2FDFB0007F3395 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				B05583052E2FDFC6007F3395 /* GetGroupChats.swift */,
+				B05583092E351ECA007F3395 /* GetPersonalChats.swift */,
+				B055830F2E354101007F3395 /* GetChatMessages.swift */,
+				B05583112E354133007F3395 /* InserChattMessage.swift */,
+				B05583132E355C00007F3395 /* MarkMessagesAsRead.swift */,
+				B055831A2E36021B007F3395 /* InsertGroupChat.swift */,
+				B055831C2E37B1EA007F3395 /* InsertOrGetPersonalChat.swift */,
+				B055831E2E3BAC54007F3395 /* blockUserService.swift */,
+				B05583202E3FB3A2007F3395 /* GetDMPartner.swift */,
+				B05583222E42541A007F3395 /* SearchGroupChats.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
+		B05583172E35FECA007F3395 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				B05583182E35FED3007F3395 /* UIApplication.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		B05583242E44F51C007F3395 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				B05583252E44F530007F3395 /* CheckPolicyView.swift */,
+				B05583282E44FDBB007F3395 /* SchoolSelectionView.swift */,
+				B055832A2E44FE59007F3395 /* PhoneVerificationView.swift */,
+				B055832C2E44FE94007F3395 /* RegisterUserView.swift */,
+				B05583302E4871C1007F3395 /* AuthUserView.swift */,
+				B05583322E48788D007F3395 /* AuthNewStudentView.swift */,
+				B05583342E487898007F3395 /* AuthCurrentStudentView.swift */,
+				B05583362E4878B1007F3395 /* AuthGraduateView.swift */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
+		B05583382E4878F3007F3395 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				B05583392E487904007F3395 /* InsertUser.swift */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
+		B05583472FACDDF6007F3395 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				B05583482FACDE01007F3395 /* PostDetailViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		B07EFFA12CFF4A6200B12717 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B05583242E44F51C007F3395 /* User */,
+				B05583172E35FECA007F3395 /* Utils */,
+				B05582FE2E2FBFF6007F3395 /* Chat */,
 				B07EFFA92CFF555B00B12717 /* home */,
 				B07EFFA42CFF514E00B12717 /* board */,
 				B07EFFA32CFF510E00B12717 /* main */,
@@ -191,12 +337,14 @@
 		B07EFFA42CFF514E00B12717 /* board */ = {
 			isa = PBXGroup;
 			children = (
+				B05583472FACDDF6007F3395 /* ViewModels */,
 				B07EFF9F2CFF4A1A00B12717 /* PostDetailView.swift */,
 				B07EFF962CC6DC9800B12717 /* postView.swift */,
 				B07EFF722C9C95A900B12717 /* boardView.swift */,
 				B096261C2D43E455009FB7C6 /* PostHeader.swift */,
 				B096262B2D700B63009FB7C6 /* insertPostView.swift */,
 				B0424E202E1C10F3004EF559 /* CommentView.swift */,
+				B05583432EB8D1C9007F3395 /* ScrollCommentView.swift */,
 			);
 			path = board;
 			sourceTree = "<group>";
@@ -204,6 +352,8 @@
 		B07EFFA52CFF534E00B12717 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				B05583382E4878F3007F3395 /* User */,
+				B05583042E2FDFB0007F3395 /* Chat */,
 				B096261E2D513211009FB7C6 /* auth */,
 				B07EFFAA2D1334BB00B12717 /* Utils */,
 				B07EFFA82CFF553000B12717 /* home */,
@@ -232,6 +382,7 @@
 				B0424E282E2AC396004EF559 /* getSavePostCount.swift */,
 				B0424E312E2D0406004EF559 /* isPostSaved.swift */,
 				B05582FC2E2E66E2007F3395 /* SearchBoards.swift */,
+				B055833B2E5DFFBA007F3395 /* SearchAllBoards.swift */,
 			);
 			path = board;
 			sourceTree = "<group>";
@@ -263,6 +414,7 @@
 				B07EFF6C2C95E53B00B12717 /* homeView.swift */,
 				B07EFF7E2CB30BC900B12717 /* settingView.swift */,
 				B07EFF7A2CB0801000B12717 /* authView.swift */,
+				B05583412E75E075007F3395 /* NotificationListView.swift */,
 			);
 			path = home;
 			sourceTree = "<group>";
@@ -271,6 +423,7 @@
 			isa = PBXGroup;
 			children = (
 				B07EFFAB2D13352A00B12717 /* daysFrontUtil.swift */,
+				B055833D2E75D573007F3395 /* NotificationUtil.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -302,6 +455,8 @@
 		B0CC0E992C7613C600D2B168 /* days */ = {
 			isa = PBXGroup;
 			children = (
+				B05583452FACB1D4007F3395 /* Config.swift */,
+				B05583012E2FDF55007F3395 /* ViewModels */,
 				B0424E362E2E6223004EF559 /* Components */,
 				B0424E332E2E57D0004EF559 /* Extensions */,
 				B0424E2C2E2ACB08004EF559 /* Resources */,
@@ -399,47 +554,80 @@
 				B0CC0EA82C8CCA9400D2B168 /* ContentView.swift in Sources */,
 				B07EFF812CB434E900B12717 /* addLectureView.swift in Sources */,
 				B07EFF7F2CB30BC900B12717 /* settingView.swift in Sources */,
+				B055833E2E75D573007F3395 /* NotificationUtil.swift in Sources */,
+				B05583162E35E530007F3395 /* GrowingTextEditor.swift in Sources */,
 				B07EFF6D2C95E53B00B12717 /* homeView.swift in Sources */,
+				B055830A2E351ECA007F3395 /* GetPersonalChats.swift in Sources */,
 				B07EFFB02D174EF600B12717 /* InsertComment.swift in Sources */,
+				B055833A2E487904007F3395 /* InsertUser.swift in Sources */,
 				B09626222D53D832009FB7C6 /* toggleFavorite.swift in Sources */,
+				B05583312E4871C1007F3395 /* AuthUserView.swift in Sources */,
 				B096262A2D7009C6009FB7C6 /* insertPost.swift in Sources */,
+				B05583262E44F530007F3395 /* CheckPolicyView.swift in Sources */,
 				B07EFF772CAB1C6D00B12717 /* searchResult.swift in Sources */,
+				B05583352E487898007F3395 /* AuthCurrentStudentView.swift in Sources */,
 				B07EFF832CB4474B00B12717 /* getFaculties.swift in Sources */,
 				B07EFF752CA04A0D00B12717 /* sendRequest.swift in Sources */,
+				B05583492FACDE09007F3395 /* PostDetailViewModel.swift in Sources */,
+				B05583002E2FC017007F3395 /* ChatView.swift in Sources */,
+				B055832B2E44FE59007F3395 /* PhoneVerificationView.swift in Sources */,
+				B05583442EB8D1C9007F3395 /* ScrollCommentView.swift in Sources */,
 				B07EFF8F2CC2D03100B12717 /* friendTableView.swift in Sources */,
+				B05583372E4878B1007F3395 /* AuthGraduateView.swift in Sources */,
 				B0CC0E9B2C7613C600D2B168 /* daysApp.swift in Sources */,
 				B07EFF732C9C95A900B12717 /* boardView.swift in Sources */,
+				B055832D2E44FE94007F3395 /* RegisterUserView.swift in Sources */,
 				B07EFF8D2CC0A80900B12717 /* getUserLectures.swift in Sources */,
+				B05583032E2FDF7A007F3395 /* GroupChatViewModel.swift in Sources */,
 				B07EFF932CC6B04500B12717 /* getBoards.swift in Sources */,
 				B07EFF7B2CB0801000B12717 /* authView.swift in Sources */,
 				B07EFF792CAB271A00B12717 /* ModalView.swift in Sources */,
+				B05583232E42541A007F3395 /* SearchGroupChats.swift in Sources */,
+				B05583142E355C00007F3395 /* MarkMessagesAsRead.swift in Sources */,
+				B055830C2E352E08007F3395 /* ChatRoomView.swift in Sources */,
 				B07EFF6F2C95E9D100B12717 /* timeTableView.swift in Sources */,
 				B0424E352E2E57FE004EF559 /* UINavigationController+SwipeBack.swift in Sources */,
 				B0424E212E1C10F3004EF559 /* CommentView.swift in Sources */,
+				B055831B2E36021B007F3395 /* InsertGroupChat.swift in Sources */,
+				B055833C2E5DFFBA007F3395 /* SearchAllBoards.swift in Sources */,
+				B05583292E44FDBB007F3395 /* SchoolSelectionView.swift in Sources */,
+				B05583422E75E075007F3395 /* NotificationListView.swift in Sources */,
 				B07EFF912CC64F7C00B12717 /* getUserData.swift in Sources */,
+				B05583192E35FEDD007F3395 /* UIApplication.swift in Sources */,
 				B07EFF872CBB700900B12717 /* searchLectureResult.swift in Sources */,
 				B0424E252E1EB057004EF559 /* getActionResponseComment.swift in Sources */,
 				B0424E272E2ABEE7004EF559 /* toggleSavePost.swift in Sources */,
 				B0424E322E2D0406004EF559 /* isPostSaved.swift in Sources */,
 				B09626262D540593009FB7C6 /* getPostFavorite.swift in Sources */,
+				B055831D2E37B1EA007F3395 /* InsertOrGetPersonalChat.swift in Sources */,
 				B07EFFA02CFF4A1B00B12717 /* PostDetailView.swift in Sources */,
+				B055830E2E3540CF007F3395 /* ChatRoomViewModel.swift in Sources */,
 				B07EFF972CC6DC9800B12717 /* postView.swift in Sources */,
+				B05583062E2FDFC6007F3395 /* GetGroupChats.swift in Sources */,
+				B05583122E354133007F3395 /* InserChattMessage.swift in Sources */,
 				B0424E1D2E16AC89004EF559 /* FavoriteManager.swift in Sources */,
 				B07EFF8B2CBE51C800B12717 /* getPlaces.swift in Sources */,
+				B05583102E354101007F3395 /* GetChatMessages.swift in Sources */,
+				B05583082E351E89007F3395 /* PersonalChatViewModel.swift in Sources */,
 				B096262C2D700B63009FB7C6 /* insertPostView.swift in Sources */,
 				B0424E232E1EAEC2004EF559 /* getActionComment.swift in Sources */,
+				B05583462FACB1D9007F3395 /* Config.swift in Sources */,
+				B05583332E48788D007F3395 /* AuthNewStudentView.swift in Sources */,
 				B07EFFAC2D13352A00B12717 /* daysFrontUtil.swift in Sources */,
 				B0424E292E2AC396004EF559 /* getSavePostCount.swift in Sources */,
 				B07EFF7D2CB1A8BE00B12717 /* authControl.swift in Sources */,
+				B05583212E3FB3A2007F3395 /* GetDMPartner.swift in Sources */,
 				B07EFF892CBE13EA00B12717 /* registerLecture.swift in Sources */,
 				B05582FD2E2E66E2007F3395 /* SearchBoards.swift in Sources */,
 				B09626202D53BE61009FB7C6 /* getActionPost.swift in Sources */,
+				B055831F2E3BAC54007F3395 /* blockUserService.swift in Sources */,
 				B0424E1F2E1C0A55004EF559 /* getResponseComments.swift in Sources */,
 				B0424E2E2E2ACB24004EF559 /* colors.swift in Sources */,
 				B07EFF852CB57D4200B12717 /* searchLecture.swift in Sources */,
 				B0424E382E2E623C004EF559 /* SearchBarView.swift in Sources */,
 				B07EFFAE2D133FBF00B12717 /* GetComments.swift in Sources */,
 				B096261D2D43E455009FB7C6 /* PostHeader.swift in Sources */,
+				B055832F2E47B250007F3395 /* SchoolSelectionViewModel.swift in Sources */,
 				B07EFF952CC6BFCF00B12717 /* getPosts.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
