@@ -18,7 +18,7 @@ struct registerResponse: Codable{
 
 func registerLecture(userId: String, lectureId: Int, completion: @escaping(String?) -> Void){
     
-    guard let url = URL(string: "http://192.168.86.220:3000/registerLecture")else{
+    guard let url = URL(string: "http://192.168.86.79:3000/registerLecture")else{
         completion(nil)
         return
     }

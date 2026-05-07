@@ -9,7 +9,7 @@ import Foundation
 
 struct APIRequest{
     static func getRequest<T: Decodable>(endPoint: String, queryItems: [URLQueryItem]? = nil, completion: @escaping(Result<T, Error>) -> Void){
-        var components = URLComponents(string: "http://192.168.86.220:3000" + endPoint)
+        var components = URLComponents(string: "http://192.168.86.79:3000" + endPoint)
         components?.queryItems = queryItems
         
         guard let url = components?.url else{
@@ -29,11 +29,13 @@ struct APIRequest{
             
             if let data = data{
                 
-                if let responseString = String(data: data, encoding: .utf8) {                            
-                        }
+                if let responseString = String(data: data, encoding: .utf8) {
+                }
                 
                 do{
-                    let decodedData = try JSONDecoder().decode(T.self, from: data)
+                    let decoder = JSONDecoder()
+                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+                    let decodedData = try decoder.decode(T.self, from: data)
                     completion(.success(decodedData))
                 }catch{
                     completion(.failure(error))
@@ -42,8 +44,52 @@ struct APIRequest{
         }.resume()
     }
     
+    static func getRequestAsync<T: Decodable>(
+        endPoint: String,
+        queryItems: [URLQueryItem]? = nil
+    ) async throws -> T {
+        
+        var components = URLComponents(
+            string: Config.baseURL + endPoint
+        )
+        
+        components?.queryItems = queryItems
+        
+        guard let url = components?.url else {
+            throw URLError(.badURL)
+        }
+        
+        print(url)
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        
+        guard 200...299 ~= httpResponse.statusCode else {
+            throw NSError(
+                domain: "",
+                code: httpResponse.statusCode,
+                userInfo: [
+                    NSLocalizedDescriptionKey:
+                        "Server Error: \(httpResponse.statusCode)"
+                ]
+            )
+        }
+        
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        
+        return try decoder.decode(T.self, from: data)
+    }
+    
     static func postRequest<T: Decodable>(endPoint: String, body: Data? = nil, completion: @escaping(Result<T, Error>) -> Void){
-        var components = URLComponents(string: "http://192.168.86.220:3000" + endPoint)
+        var components = URLComponents(string: "http://192.168.86.79:3000" + endPoint)
         
         guard let url = components?.url else{
             completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
@@ -55,8 +101,8 @@ struct APIRequest{
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         if let body = body {
-                    request.httpBody = body
-                }
+            request.httpBody = body
+        }
         
         URLSession.shared.dataTask(with: request){data, response, error in
             if let error = error{
@@ -65,16 +111,69 @@ struct APIRequest{
             }
             
             guard let data = data else {
-                        completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No data received"])))
-                        return
+                completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No data received"])))
+                return
             }
-            if let responseString = String(data: data, encoding: .utf8) {                
+            if let responseString = String(data: data, encoding: .utf8) {
             }
-                
+            
             do{
                 let decodedData = try JSONDecoder().decode(T.self, from: data)
                 completion(.success(decodedData))
             }catch{
+                completion(.failure(error))
+            }
+        }.resume()
+    }
+    
+    static func postRequestVoid(endPoint: String, body: Data?, completion: @escaping (Result<Void, Error>) -> Void) {
+        var request = URLRequest(url: URL(string: "http://192.168.86.79:3000" + endPoint)!)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = body
+        
+        URLSession.shared.dataTask(with: request) { _, _, error in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                completion(.success(()))
+            }
+        }.resume()
+    }
+    
+    static func uploadMultipart<T: Decodable>(
+        endPoint: String,
+        body: Data,
+        boundary: String,
+        completion: @escaping (Result<T, Error>) -> Void
+    ) {
+        var components = URLComponents(string: "http://192.168.86.79:3000" + endPoint)
+        
+        guard let url = components?.url else {
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.httpBody = body
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let data = data else {
+                completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No data received"])))
+                return
+            }
+            
+            do {
+                let decodedData = try JSONDecoder().decode(T.self, from: data)
+                completion(.success(decodedData))
+            } catch {
                 completion(.failure(error))
             }
         }.resume()

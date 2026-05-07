@@ -8,67 +8,85 @@ struct CommentView: View {
     @Binding var isCommentFavoriteList : [Int: Bool]
     @Binding var isResponseCommentFavoriteList : [Int: Bool]
     @Binding var userId: String
+    @Binding var intUserId: Int
+    
+    func handleResponseCommentFavorite(_ responseComment: responseCommentResponse) {
+        toggleFavorite(responseCommentId: responseComment.responseCommentId, userId: userId, actionName: "favorite") { (result: Bool?) in
+            DispatchQueue.main.async {
+                guard let result = result else { return }
+                if result {
+                    isResponseCommentFavoriteList[responseComment.responseCommentId] = true
+                    NotificationUtil.sendFavoriteNotification(for: .responseComment(responseComment), userId: userId, intUserId: intUserId)
+                } else {
+                    isResponseCommentFavoriteList[responseComment.responseCommentId] = false
+                }
+            }
+        }
+    }
 
+    
     var body: some View {
         VStack(alignment: .leading) {
             Divider()
+            HStack {
+                Image(systemName: "person.circle")
+                    .resizable()
+                    .frame(width: 20, height: 20)
+                Text(comment.isAnonymous ? "匿名" : comment.commenterId)
+                    .font(.body)
+                Spacer()
                 HStack {
-                    Image(systemName: "person.circle")
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                    Text(comment.isAnonymous ? "匿名" : comment.commenterId)
-                        .font(.body)
-                    Spacer()
-                    HStack {
-                        Button(action: {
-                            toggleFavorite(commentId: comment.commentId, userId: userId, actionName: "favorite"){result in                                
-                                
+                    Button(action: {
+                        toggleFavorite(commentId: comment.commentId, userId: userId, actionName: "favorite"){result in
+                            DispatchQueue.main.async{
                                 guard let result = result else{
                                     return
                                 }
                                 if(result){
                                     isCommentFavoriteList[comment.commentId] = true
+                                    NotificationUtil.sendFavoriteNotification(for: .comment(comment), userId: userId, intUserId: intUserId)
                                 }else{
                                     isCommentFavoriteList[comment.commentId] = false
                                 }
                             }
-                        }, label: {
-                            Image(systemName: (isCommentFavoriteList[comment.commentId] ?? false) ? "heart.fill": "heart")
-                                .padding(5)
-                                .foregroundColor((isCommentFavoriteList[comment.commentId] ?? false) ? .red: .gray)
-                        })
-                        Divider()
-                            .frame(height: 24)
-                            .background(Color.gray.opacity(0.3))
-                        Button(action: {
-                            targetCommentId = comment.commentId
-                            isFocused = true
-                        }) {
-                            Image(systemName: "bubble")
-                                .padding(5)
                         }
-                        Divider()
-                            .frame(height: 24)
-                            .background(Color.gray.opacity(0.3))
-                        Button(action: {}) {
-                            Image(systemName: "ellipsis")
-                                .rotationEffect(.degrees(90))
-                                .padding(5)
-                        }
+                    }, label: {
+                        Image(systemName: (isCommentFavoriteList[comment.commentId] ?? false) ? "heart.fill": "heart")
+                            .padding(5)
+                            .foregroundColor((isCommentFavoriteList[comment.commentId] ?? false) ? .red: .gray)
+                    })
+                    Divider()
+                        .frame(height: 24)
+                        .background(Color.gray.opacity(0.3))
+                    Button(action: {
+                        targetCommentId = comment.commentId
+                        isFocused = true
+                    }) {
+                        Image(systemName: "bubble")
+                            .padding(5)
                     }
-                    .background(Color(red: 0xD9/255, green: 0xD9/255, blue: 0xD9/255))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 15)
-                            .stroke(Color(red: 0xD9/255, green: 0xD9/255, blue: 0xD9/255), lineWidth: 1)
-                    )
+                    Divider()
+                        .frame(height: 24)
+                        .background(Color.gray.opacity(0.3))
+                    Button(action: {}) {
+                        Image(systemName: "ellipsis")
+                            .rotationEffect(.degrees(90))
+                            .padding(5)
+                    }
                 }
-                Text(comment.commentMessage)
-                    .padding(5)
-                    .font(.body)
-                
-                Text(comment.createdAt)
-                    .font(.caption2)
-                    .foregroundColor(Color(red: 0.4039, green: 0.3961, blue: 0.3961))
+                .background(Color(red: 0xD9/255, green: 0xD9/255, blue: 0xD9/255))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 15)
+                        .stroke(Color(red: 0xD9/255, green: 0xD9/255, blue: 0xD9/255), lineWidth: 1)
+                )
+            }
+            Text(comment.commentMessage)
+                .padding(5)
+                .font(.body)
+            
+            Text(comment.createdAt)
+                .font(.caption2)
+                .foregroundColor(Color(red: 0.4039, green: 0.3961, blue: 0.3961))
             ScrollView{
                 ForEach(responseComments){responseComment in
                     HStack{
@@ -86,16 +104,21 @@ struct CommentView: View {
                                 Spacer()
                                 HStack {
                                     Button(action: {
-                                        toggleFavorite(responseCommentId: responseComment.responseCommentId, userId: userId, actionName: "favorite"){result in
-                                            guard let result = result else{
-                                                return
-                                            }
-                                            if(result){
-                                                isResponseCommentFavoriteList[responseComment.responseCommentId] = true
-                                            }else{
-                                                isResponseCommentFavoriteList[responseComment.responseCommentId] = false
-                                            }
-                                        }
+//                                        toggleFavorite(responseCommentId: responseComment.responseCommentId, userId: userId, actionName: "favorite"){result in
+//                                            DispatchQueue.main.async{
+//                                                guard let result = result else{
+//                                                    return
+//                                                }
+//                                                if(result){
+//                                                    isResponseCommentFavoriteList[responseComment.responseCommentId] = true
+//                                                    let target = NotificationTarget.comment(responseComment)
+//                                                    NotificationUtil.sendFavoriteNotification(for: target, userId: userId, intUserId: intUserId)
+//                                                }else{
+//                                                    isResponseCommentFavoriteList[responseComment.responseCommentId] = false
+//                                                }
+//                                            }
+//                                        }
+                                        handleResponseCommentFavorite(responseComment)
                                     }, label: {
                                         Image(systemName: (isResponseCommentFavoriteList[responseComment.responseCommentId] ?? false) ? "heart.fill": "heart")
                                             .padding(5)
@@ -142,7 +165,7 @@ struct CommentView: View {
                         print("取得失敗")
                         return
                     }
-                 responseComments = results
+                    responseComments = results
                 }
             }
         }

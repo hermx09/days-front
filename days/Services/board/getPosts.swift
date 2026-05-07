@@ -27,50 +27,100 @@ struct postInfoForHomeResponse: Codable, Equatable, Identifiable, Hashable{
     var commentCount: Int
 }
 
-func getPosts(boardId: Int, userId: String, postType: PostType, completion: @escaping([postResponse]?) -> Void){
+//func getPosts(boardId: Int, userId: String, postType: PostType, completion: @escaping([postResponse]?) -> Void){
+//    
+//    var queryItems: [URLQueryItem] = [
+//            URLQueryItem(name: "boardId", value: String(boardId)),
+//            URLQueryItem(name: "userId", value: userId)
+//        ]
+//        
+//        // PostType に応じてクエリパラメータ追加
+//        switch postType {
+//        case .myPosts:
+//            queryItems.append(URLQueryItem(name: "postType", value: "myPosts"))
+//        case .commented:
+//            queryItems.append(URLQueryItem(name: "postType", value: "commented"))
+//        case .saved:
+//            queryItems.append(URLQueryItem(name: "postType", value: "saved"))
+//        case .popular:
+//            queryItems.append(URLQueryItem(name: "postType", value: "popular"))
+//        default:
+//            break // .all の場合は追加なし
+//        }
+//        
+//        APIRequest.getRequest(
+//            endPoint: "/getPosts",
+//            queryItems: queryItems
+//        ) { (result: Result<[postResponse], Error>) in
+//            switch result {
+//            case .success(let posts):
+//                completion(posts)
+//            case .failure(let error):
+//                completion(nil)
+//            }
+//        }
+//}
+
+func getPosts(
+    boardId: Int,
+    userId: String,
+    postType: PostType
+) async throws -> [postResponse] {
     
     var queryItems: [URLQueryItem] = [
-            URLQueryItem(name: "boardId", value: String(boardId)),
-            URLQueryItem(name: "userId", value: userId)
-        ]
+        URLQueryItem(name: "boardId", value: String(boardId)),
+        URLQueryItem(name: "userId", value: userId)
+    ]
+    
+    // PostType に応じてクエリパラメータ追加
+    switch postType {
+    case .myPosts:
+        queryItems.append(
+            URLQueryItem(name: "postType", value: "myPosts")
+        )
         
-        // PostType に応じてクエリパラメータ追加
-        switch postType {
-        case .myPosts:
-            queryItems.append(URLQueryItem(name: "postType", value: "myPosts"))
-        case .commented:
-            queryItems.append(URLQueryItem(name: "postType", value: "commented"))
-        case .saved:
-            queryItems.append(URLQueryItem(name: "postType", value: "saved"))
-        case .popular:
-            queryItems.append(URLQueryItem(name: "postType", value: "popular"))
-        default:
-            break // .all の場合は追加なし
-        }
+    case .commented:
+        queryItems.append(
+            URLQueryItem(name: "postType", value: "commented")
+        )
         
-        APIRequest.getRequest(
-            endPoint: "/getPosts",
-            queryItems: queryItems
-        ) { (result: Result<[postResponse], Error>) in
-            switch result {
-            case .success(let posts):
-                completion(posts)
-            case .failure(let error):
-                completion(nil)
-            }
-        }
+    case .saved:
+        queryItems.append(
+            URLQueryItem(name: "postType", value: "saved")
+        )
+        
+    case .popular:
+        queryItems.append(
+            URLQueryItem(name: "postType", value: "popular")
+        )
+        
+    default:
+        break
+    }
+    
+    return try await APIRequest.getRequestAsync(
+        endPoint: "/getPosts",
+        queryItems: queryItems
+    )
 }
 
-func getPostsInfoForHome(completion: @escaping([postInfoForHomeResponse]?) -> Void){
-        
-        APIRequest.getRequest(
-            endPoint: "/getPostsInfoForHome"
-        ) { (result: Result<[postInfoForHomeResponse], Error>) in
-            switch result {
-            case .success(let posts):
-                completion(posts)
-            case .failure(let error):
-                completion(nil)
-            }
-        }
+//func getPostsInfoForHome(completion: @escaping([postInfoForHomeResponse]?) -> Void){
+//        
+//        APIRequest.getRequest(
+//            endPoint: "/getPostsInfoForHome"
+//        ) { (result: Result<[postInfoForHomeResponse], Error>) in
+//            switch result {
+//            case .success(let posts):
+//                completion(posts)
+//            case .failure(let error):
+//                completion(nil)
+//            }
+//        }
+//}
+
+func getPostsInfoForHome() async throws -> [postInfoForHomeResponse] {
+    
+    return try await APIRequest.getRequestAsync(
+        endPoint: "/getPostsInfoForHome"
+    )
 }

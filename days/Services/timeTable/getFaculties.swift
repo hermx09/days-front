@@ -14,7 +14,7 @@ struct facultiesResponse: Codable{
 
 func getFaculties(completion: @escaping([facultiesResponse]?) -> Void){
     
-    guard let url = URL(string: "http://192.168.86.220:3000/getFaculties")else{
+    guard let url = URL(string: "http://192.168.86.79:3000/getFaculties")else{
         return completion(nil)
     }
         

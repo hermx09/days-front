@@ -8,14 +8,15 @@
 import Foundation
 
 struct userDataResponse: Codable{
-    var userName: String
+    var id: Int
+    var name: String
     var userId: String
     var email: String
-    var faculty: String
+    var faculty: Int
 }
 
-func getUserData(userId: String, completion: @escaping(userDataResponse?) -> Void){
-    var components = URLComponents(string: "http://192.168.86.220:3000/getUserData")
+func getUserData(userId: String, completion: @escaping(User?) -> Void){
+    var components = URLComponents(string: "http://192.168.86.79:3000/getUserData")
         
         components?.queryItems = [
             URLQueryItem(name: "userId", value: userId)
@@ -41,7 +42,7 @@ func getUserData(userId: String, completion: @escaping(userDataResponse?) -> Voi
                 
         do{
             if let data = data{
-                let responseData = try JSONDecoder().decode(userDataResponse.self, from: data)
+                let responseData = try JSONDecoder().decode(User.self, from: data)
                 completion(responseData)
             }
         }catch{

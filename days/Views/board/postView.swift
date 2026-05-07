@@ -53,28 +53,32 @@ struct postView: View {
     @State var isPostAnonymous: Bool = false
     let board: boardResponse
     @Binding var postType: PostType
+    @Binding var intUserId: Int
+    @State private var hasLoadedPosts = false
     
     init(
-            board: boardResponse,
-            selectedBoard: Binding<String>,
-            postResponseList: Binding<[postResponse]>,
-            postDetail: Binding<postResponse>,
-            postId: Binding<Int>,
-            userId: Binding<String>,
-            favoriteCount: Binding<[Int: Int]>,
-            boardId: Binding<Int>,
-            postType: Binding<PostType>
-        ) {
-            self.board = board
-            self._selectedBoard = selectedBoard
-            self._postResponseList = postResponseList
-            self._postDetail = postDetail
-            self._postId = postId
-            self._userId = userId
-            self._favoriteCount = favoriteCount
-            self._boardId = boardId
-            self._postType = postType
-        }
+        board: boardResponse,
+        selectedBoard: Binding<String>,
+        postResponseList: Binding<[postResponse]>,
+        postDetail: Binding<postResponse>,
+        postId: Binding<Int>,
+        userId: Binding<String>,
+        favoriteCount: Binding<[Int: Int]>,
+        boardId: Binding<Int>,
+        postType: Binding<PostType>,
+        intUserId: Binding<Int>
+    ) {
+        self.board = board
+        self._selectedBoard = selectedBoard
+        self._postResponseList = postResponseList
+        self._postDetail = postDetail
+        self._postId = postId
+        self._userId = userId
+        self._favoriteCount = favoriteCount
+        self._boardId = boardId
+        self._postType = postType
+        self._intUserId = intUserId
+    }
     
     func bindingForFavorite(postId: Int) -> Binding<Bool> {
         Binding<Bool>(
@@ -85,6 +89,52 @@ struct postView: View {
                 favoriteManager.isFavoriteList[postId] = newValue
             }
         )
+    }
+    
+    func incrementFavorite(for post: postResponse) {
+        favoriteCount[post.postId, default: 0] += 1
+        favoriteManager.isFavoriteList[post.postId] = true
+        nextFavoriteCount += 1
+    }
+    
+    func decrementFavorite(for post: postResponse) {
+        favoriteCount[post.postId, default: 0] -= 1
+        favoriteManager.isFavoriteList[post.postId] = false
+        nextFavoriteCount -= 1
+    }
+    
+    //    func sendFavoriteNotification(for post: postResponse) {
+    //        if(post.posterId == userId){
+    //            return
+    //        }
+    //        getUserData(userId: post.posterId){user in
+    //            guard let user = user else {
+    //                return
+    //            }
+    //            NotificationUtil.insertNotification(
+    //                recipientId: user.id,
+    //                actorId: intUserId,
+    //                type: "favorite",
+    //                referenceTable: "Posts",
+    //                referenceId: post.postId,
+    //                completion: {_ in}
+    //
+    //            )
+    //        }
+    //    }
+    
+    func handleFavorite(post: postResponse) {
+        toggleFavorite(postId: post.postId, userId: userId, actionName: "favorite") { result in
+            guard let result = result else { return }
+            DispatchQueue.main.async{
+                if result {
+                    incrementFavorite(for: post)
+                    NotificationUtil.sendFavoriteNotification(for: .post(post), userId: userId, intUserId: intUserId)
+                } else {
+                    decrementFavorite(for: post)
+                }
+            }
+        }
     }
     
     var body: some View {
@@ -129,18 +179,33 @@ struct postView: View {
                                     }
                                 HStack{
                                     Button(action: {
-                                        toggleFavorite(postId: post.postId, userId: userId, actionName: "favorite"){result in
-                                            guard let result = result else{
-                                                return
-                                            }
-                                            if(result){
-                                                favoriteCount[post.postId, default: 0] += 1
-                                                favoriteManager.isFavoriteList[post.postId] = true
-                                                nextFavoriteCount += 1
-                                            }else{
-                                                favoriteCount[post.postId, default: 0] -= 1
-                                                favoriteManager.isFavoriteList[post.postId] = false
-                                                nextFavoriteCount -= 1
+                                        //                                        toggleFavorite(postId: post.postId, userId: userId, actionName: "favorite"){result in
+                                        //                                            guard let result = result else{
+                                        //                                                return
+                                        //                                            }
+                                        //                                            if(result){
+                                        //                                                favoriteCount[post.postId, default: 0] += 1
+                                        //                                                favoriteManager.isFavoriteList[post.postId] = true
+                                        //                                                nextFavoriteCount += 1
+                                        //                                                if(post.posterId != userId){
+                                        //
+                                        //                                                }
+                                        //                                            }else{
+                                        //                                                favoriteCount[post.postId, default: 0] -= 1
+                                        //                                                favoriteManager.isFavoriteList[post.postId] = false
+                                        //                                                nextFavoriteCount -= 1
+                                        //                                            }
+                                        //                                        }
+                                        //                                        handleFavorite(post: post)
+                                        toggleFavorite(postId: post.postId, userId: userId, actionName: "favorite") { result in
+                                            guard let result = result else { return }
+                                            DispatchQueue.main.async{
+                                                if result {
+                                                    incrementFavorite(for: post)
+                                                    NotificationUtil.sendFavoriteNotification(for: .post(post), userId: userId, intUserId: intUserId)
+                                                } else {
+                                                    decrementFavorite(for: post)
+                                                }
                                             }
                                         }
                                     }, label: {
@@ -203,41 +268,63 @@ struct postView: View {
             .padding(EdgeInsets(top: 0, leading: 16, bottom: 16, trailing: 16))
         }
         .sheet(isPresented: $isPresentingInsertPostView, onDismiss: {
-            getPosts(boardId: boardId, userId: userId, postType: postType) { results in
-                DispatchQueue.main.async {
-                    guard let results = results else {
-                        print("取得失敗")
-                        return
-                    }
-                    postResponseList = results
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        favoriteManager.loadFavorites(userId: userId, posts: results)
-                    }
-                }
+            Task {
+                await loadPosts()
             }
+            //            getPosts(boardId: boardId, userId: userId, postType: postType) { results in
+            //                DispatchQueue.main.async {
+            //                    guard let results = results else {
+            //                        print("取得失敗")
+            //                        return
+            //                    }
+            //                    postResponseList = results
+            //                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            //                        favoriteManager.loadFavorites(userId: userId, posts: results)
+            //                    }
+            //                }
+            //            }
         }) {
-                insertPostView(isPresentingInsertPostView: $isPresentingInsertPostView, userId: $userId, boardId: $boardId)
-            }
-            .onAppear{
-                getPosts(boardId: boardId, userId: userId, postType: postType) { results in
-                    DispatchQueue.main.async {
-                        guard let results = results else {
-                            print("取得失敗")
-                            return
-                        }
-                        postResponseList = results
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            favoriteManager.loadFavorites(userId: userId, posts: results)
-                        }
-                    }
-                }
-            }
-        .navigationBarHidden(true)
+            insertPostView(isPresentingInsertPostView: $isPresentingInsertPostView, userId: $userId, boardId: $boardId)
         }
+        .task{
+            guard !hasLoadedPosts else { return }
+            hasLoadedPosts = true
+            //            getPosts(boardId: boardId, userId: userId, postType: postType) { results in
+            //                DispatchQueue.main.async {
+            //                    guard let results = results else {
+            //                        print("取得失敗")
+            //                        return
+            //                    }
+            //                    postResponseList = results
+            //                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            //                        favoriteManager.loadFavorites(userId: userId, posts: results)
+            //                    }
+            //                }
+            //            }
+            await loadPosts()
+            
+        }
+        .navigationBarHidden(true)
+        
+    }
+    
+    private func loadPosts() async {
+        do {
+            let results = try await getPosts(
+                boardId: boardId,
+                userId: userId,
+                postType: postType
+            )
+            
+            postResponseList = results
+            favoriteManager.loadFavorites(
+                        userId: userId,
+                        posts: results
+            )
+            
+        } catch {
+            print(error)
+        }
+    }
     
 }
-
-/*
-#Preview {
-    postView(postFlg: false)
-}*/

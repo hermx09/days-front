@@ -7,6 +7,17 @@
 
 import SwiftUI
 
+enum AuthStep: Hashable {
+    case checkPolicy
+    case selectSchool
+    case verifyPhone
+    case registerUser
+    case authUser
+    case authNewStudent
+    case authCurrentStudent
+    case authGraduate    
+}
+
 struct authView: View {
     @FocusState var focus: Bool
     @State var idName = ""
@@ -16,105 +27,122 @@ struct authView: View {
     @Binding var tabClick1: Bool
     @Binding var userId: String
     @Binding var userName: String
-    @Binding var faculty: String
+    @Binding var faculty: Int
+    @Binding var intUserId: Int
+    @Binding var authPath: NavigationPath
+    @Binding var userInfo: User
     
     var body: some View {
-        VStack{
-            Image(systemName: "star.circle.fill")
-                .resizable()
-                .frame(width: 45, height: 45)
-                .padding(.top, 100)
-                .padding(.bottom)
-            Text("大学生活をもっと楽に\n      楽しく過ごせる")
-                .foregroundColor(.gray)
-                .font(.headline)
-                .padding(.bottom, 5)
-            Text("DAYS")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundColor(Color(red: 0.984, green: 0.765, blue: 0.765))
-                .padding(.bottom)
-            TextField("ID", text: $idName)
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-                .padding(.leading, 10)
-                .font(.caption)
-                .focused($focus)
-                .foregroundColor(.black)
-                .padding(7)
-                .overlay(RoundedRectangle(cornerRadius: 40).stroke(lineWidth: 0.1))
-                .background(Color(red: 0.95, green: 0.95, blue: 0.95), in: RoundedRectangle(cornerRadius: 40))
-                .padding(.bottom, 1)
-            TextField("PASSWORD", text: $passName)
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-                .padding(.leading, 10)
-                .font(.caption)
-                .focused($focus)
-                .foregroundColor(.black)
-                .padding(7)
-                .overlay(RoundedRectangle(cornerRadius: 40).stroke(lineWidth: 0.1))
-                .background(Color(red: 0.95, green: 0.95, blue: 0.95), in: RoundedRectangle(cornerRadius: 40))
-            Button(action: {
-                focus = false
-                loginCheck(idName: idName, passName: passName){result in
-                    DispatchQueue.main.async {
-                        if let result = result{
-                            if(result){
+        
+            VStack{
+                Image(systemName: "star.circle.fill")
+                    .resizable()
+                    .frame(width: 45, height: 45)
+                    .padding(.top, 100)
+                    .padding(.bottom)
+                Text("大学生活をもっと楽に\n      楽しく過ごせる")
+                    .foregroundColor(.gray)
+                    .font(.headline)
+                    .padding(.bottom, 5)
+                Text("DAYS")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color(red: 0.984, green: 0.765, blue: 0.765))
+                    .padding(.bottom)
+                TextField("ID", text: $idName)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .padding(.leading, 10)
+                    .font(.caption)
+                    .focused($focus)
+                    .foregroundColor(.black)
+                    .padding(7)
+                    .overlay(RoundedRectangle(cornerRadius: 40).stroke(lineWidth: 0.1))
+                    .background(Color(red: 0.95, green: 0.95, blue: 0.95), in: RoundedRectangle(cornerRadius: 40))
+                    .padding(.bottom, 1)
+                TextField("PASSWORD", text: $passName)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .padding(.leading, 10)
+                    .font(.caption)
+                    .focused($focus)
+                    .foregroundColor(.black)
+                    .padding(7)
+                    .overlay(RoundedRectangle(cornerRadius: 40).stroke(lineWidth: 0.1))
+                    .background(Color(red: 0.95, green: 0.95, blue: 0.95), in: RoundedRectangle(cornerRadius: 40))
+                Button(action: {
+                    focus = false
+                    loginCheck(idName: idName, passName: passName, userInfo: userInfo){result in
+                        DispatchQueue.main.async {
+                            if let result = result{
+                                if result.status == "pending" {
+                                    print("認証中です")
+                                    alertFlg = true
+                                    return
+                                }
+                                userInfo = result
                                 userId = idName
+                                intUserId = result.id
                                 auth = false
                                 tabClick1 = true
                             }else{
                                 alertFlg = true
+                                print("取得できませんでした")
                             }
-                        }else{
-                            print("取得できませんでした")
+                            
                         }
-                        
                     }
-                }
-            }, label: {
-                HStack{
-                    Spacer()
-                    Text("DAYS ログイン")
+                }, label: {
+                    HStack{
+                        Spacer()
+                        Text("DAYS ログイン")
+                            .foregroundColor(.black)
+                        Spacer()
+                    }
+                })
+                .padding(5)
+                .overlay(RoundedRectangle(cornerRadius: 40).stroke(lineWidth: 0.1))
+                .background(Color(red: 0.984, green: 0.765, blue: 0.765), in: RoundedRectangle(cornerRadius: 40))
+                Button(action: {}, label: {
+                    Text("ID / PASSWORD 忘れた場合")
+                        .foregroundColor(.gray)
+                        .font(.caption)
+                })
+                .padding(.top, 50)
+                .padding(.bottom, 5)
+                Button(action: {
+                    authPath.append(AuthStep.checkPolicy)
+                }, label: {
+                    Text("アカウント作成")
                         .foregroundColor(.black)
-                    Spacer()
-                }
-            })
-            .padding(5)
-            .overlay(RoundedRectangle(cornerRadius: 40).stroke(lineWidth: 0.1))
-            .background(Color(red: 0.984, green: 0.765, blue: 0.765), in: RoundedRectangle(cornerRadius: 40))
-            Button(action: {}, label: {
-                Text("ID / PASSWORD 忘れた場合")
-                    .foregroundColor(.gray)
-                    .font(.caption)
-            })
-            .padding(.top, 50)
-            .padding(.bottom, 5)
-            Button(action: {}, label: {
-                Text("アカウント作成")
-                    .foregroundColor(.black)
-                    .font(.caption)
-            })
-            Spacer()
+                        .font(.caption)
+                })
+                Spacer()
         }
         .onTapGesture {
             focus = false
         }
         .onAppear{
-            sendToken(){result in
+            sendToken(userInfo: userInfo){result in
                 DispatchQueue.main.async{
                     if let result = result{
                         if(result.startFlg){
-                            getUserData(userId: result.message){result in
+                            userId = result.message
+                            getUserData(userId: userId){result in
                                 DispatchQueue.main.async{
-                                    if let result = result{                                        
-                                        userName = result.userName
+                                    if let result = result{
+                                        if result.status == "pending" {
+                                            print("認証中です")
+                                            alertFlg = true
+                                            return
+                                        }
+                                        userInfo = result
+                                        userName = result.name
                                         faculty = result.faculty
+                                        intUserId = result.id
                                     }
                                 }
                             }
-                            userId = result.message
                             auth = false
                             tabClick1 = true
                         }
@@ -133,14 +161,3 @@ struct authView: View {
     
 }
 
-struct authView_Previews: PreviewProvider {
-    @State static var auth = true
-    @State static var tabClick1 = false
-    @State static var userId = "a"
-    @State static var userName = "あ"
-    @State static var faculty = "商学部"
-    
-    static var previews: some View {
-        authView(auth: $auth, tabClick1: $tabClick1, userId: $userId, userName: $userName, faculty: $faculty)
-    }
-}
