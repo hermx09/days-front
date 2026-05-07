@@ -12,25 +12,33 @@ struct myRequest: Codable{
     var passName: String
 }
 
-struct myResponse: Codable{
+struct authCheckResponse: Codable{
     var token: String?
-    var loginFlg: Bool
+    var result: User
+}
+
+struct userData: Codable, Equatable, Identifiable{
+    var id: Int
+    var name: String
+    var password: String
+    var email: String
+    var date: String
+    var userId: String
+    var faculty: Int
 }
 
 struct tokenResponse: Codable{
     var message: String
     var startFlg: Bool
 }
-func loginCheck(idName: String, passName: String, completion: @escaping(Bool?) -> Void){
-    
+func loginCheck(idName: String, passName: String, userInfo: User, completion: @escaping(User?) -> Void){    
     if idName == "" || passName == ""{
         print("IDまたはPASSWORDが不正です")
         completion(nil)
         return
     }
     
-    print("id: \(idName)  pass: \(passName)")
-    guard let url = URL(string: "http://localhost:3000/authCheck") else{
+    guard let url = URL(string: "http://192.168.86.79:3000/authCheck") else{
         completion(nil)
         return
     }
@@ -50,27 +58,23 @@ func loginCheck(idName: String, passName: String, completion: @escaping(Bool?) -
     }
     
     URLSession.shared.dataTask(with: request){data, response, error in
-        print("チェック開始")
         if let error = error{
             print("Error: \(error)")
             completion(nil)
             return
         }
-        
-        if let httpResponse = response as? HTTPURLResponse{
-            print("Status Code: \(httpResponse.statusCode)")
-        }
-        
+                
         if let data = data{
             do{
-                let responseData = try JSONDecoder().decode(myResponse.self, from: data)
-                print("Response: \(responseData)")
-                if let token = responseData.token{
-                    if(responseData.loginFlg){
-                        saveToken(token: token)
-                    }
+                let responseData = try JSONDecoder().decode(authCheckResponse.self, from: data)
+                if(responseData.result.status == "pending"){
+                    print("認証中です")
+                    completion(nil)
                 }
-                completion(responseData.loginFlg)
+                if let token = responseData.token{
+                    saveToken(token: token)
+                }
+                completion(responseData.result)
             }catch{
                 print("Error encording response: \(error)")
                 completion(nil)
@@ -80,14 +84,17 @@ func loginCheck(idName: String, passName: String, completion: @escaping(Bool?) -
     
 }
 
-func sendToken(completion: @escaping(tokenResponse?) -> Void){
+func sendToken(userInfo: User, completion: @escaping(tokenResponse?) -> Void){
+    if(userInfo.status == "pending"){
+        print("認証中です")
+        return
+    }
     guard let token = UserDefaults.standard.string(forKey: "jwtToken") else{
         print("トークンが見つかりません")
         completion(nil)
         return
     }
-    
-    guard let url = URL(string: "http://localhost:3000/protected") else{
+    guard let url = URL(string: "http://192.168.86.79:3000/protected") else{
         completion(nil)
         return
     }
@@ -101,13 +108,9 @@ func sendToken(completion: @escaping(tokenResponse?) -> Void){
             completion(nil)
             return
         }
-        if let httpResponse = response as? HTTPURLResponse{
-            print("Status code: \(httpResponse.statusCode)")
-        }
         if let data = data{
             do{
-                let responseData = try JSONDecoder().decode(tokenResponse.self, from: data)
-                print("Response: \(responseData)")
+                let responseData = try JSONDecoder().decode(tokenResponse.self, from: data)                
                 completion(responseData)
             }catch{
                 print("Error encording response: \(error)")

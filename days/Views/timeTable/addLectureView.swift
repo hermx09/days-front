@@ -27,6 +27,7 @@ struct addLectureView: View {
     @Binding var lectureData: [lectureResponse]
     @Binding var searchLectureResultFlg: Bool
     @Binding var addLectureFlg: Bool
+    var onSearchLectureResultView: () -> Void
     
         var body: some View {
             VStack{
@@ -215,8 +216,7 @@ struct addLectureView: View {
                             .onAppear{
                                 getPlaces(){ results in
                                     DispatchQueue.main.async{
-                                        if let result = results{
-                                            print(result)
+                                        if let result = results{                                            
                                             places.insert(contentsOf: result.map{$0.placeName}, at: 1)
                                         }else{
                                             print("キャンパスデータの取得に失敗")
@@ -257,19 +257,14 @@ struct addLectureView: View {
                 }
                 Button(action: {
                     searchLecture(faculty: selectedFaculty, year: year, springFlg: springFlg, autumnFlg: autumnFlg, day: daysText, period: Int(periodsText) ?? 0, lectureName: lectureName, teacherName: teacherName, place: selectedPlace){result in
-                        //print("帰ってきたのは: \(result)")
                         guard let lectureResponseData = result else{
-                            print("値なし")
                             return
                         }
                         DispatchQueue.main.async{
-                            print("外面遷移")
-                            /*lectureData = []
-                            lectureData.append(lectureResponseData)*/
                             lectureData = lectureResponseData
-                            print("lectureResponseData: \(lectureResponseData)")
                             searchLectureResultFlg = true
                             addLectureFlg = false
+                            onSearchLectureResultView()
                         }
                     }
                 }, label: {

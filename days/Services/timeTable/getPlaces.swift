@@ -12,9 +12,8 @@ struct placesResponse: Codable{
 }
 
 func getPlaces(completion: @escaping([placesResponse]?) -> Void){
-    print("キャンパス取得")
     
-    guard let url = URL(string: "http://localhost:3000/getPlaces") else{
+    guard let url = URL(string: "http://192.168.86.79:3000/getPlaces") else{
         return completion(nil)
     }
         
@@ -30,13 +29,11 @@ func getPlaces(completion: @escaping([placesResponse]?) -> Void){
         }
         
         if let response = response as? HTTPURLResponse{
-            print("StatusCode: \(response.statusCode)")
         }
         
         if let data = data{
             do{
                 let responseData = try JSONDecoder().decode([placesResponse].self, from: data)
-                print("Response: \(responseData)")
                 completion(responseData)
             }catch{
                 print("Error encording response: \(error)")

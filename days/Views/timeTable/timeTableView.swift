@@ -29,6 +29,8 @@ struct timeTableView: View {
     @Binding var friendId: String
     @Binding var friendTableFlg: Bool
     @Binding var searchLectureResultFlg: Bool
+    var onAddLectureView: () -> Void
+    var onFriendTableView: () -> Void
     
     // グリッドの雛形
     @State var gridInit = [
@@ -67,6 +69,7 @@ struct timeTableView: View {
                 Button(action: {
                     tabClick2 = false
                     addLectureFlg = true
+                    onAddLectureView()
                 }, label: {
                     Image(systemName: "plus.circle")
                         .resizable()
@@ -125,7 +128,6 @@ struct timeTableView: View {
                         return
                     }
                     DispatchQueue.main.async{
-                        print("帰ってきたのは:\(results)")
                         for result in results {
                         tables.append(timeTalbes(lectureTime: result.lectureTime, lectureName: result.lectureName, teacherName: result.teacherName, roomNum: result.roomNum, day: result.day))
                         }
@@ -283,7 +285,7 @@ struct timeTableView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .contentShape(Rectangle())
             .sheet(isPresented: $isPresented){
-                ModalView(isPresented: $isPresented, resultData: $resultData, tabClick2: $tabClick2, friendTableFlg: $friendTableFlg, friendId: $friendId)
+                ModalView(isPresented: $isPresented, resultData: $resultData, tabClick2: $tabClick2, friendTableFlg: $friendTableFlg, friendId: $friendId, onFriendTableView: onFriendTableView)
             }
             .onTapGesture {
                 focus = false
@@ -299,12 +301,9 @@ struct timeTableView: View {
         }
     }
     func searchFriends(){
-        print("入力された値: \(inputName)")
         sendPostRequest(friendName: inputName){ results in
             DispatchQueue.main.async{
                 if let results = results{
-                    print("取得したのは: \(results)")
-                    //modalName = result.resultName
                     resultData = results
                     isPresented = true
                 }else{

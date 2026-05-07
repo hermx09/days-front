@@ -7,8 +7,35 @@
 
 import SwiftUI
 
+enum PostType: Hashable {
+    case all
+    case myPosts
+    case commented
+    case saved
+    case popular
+    case favorite
+}
+
+func titleForPostType(type: PostType) -> String {
+    switch type {
+    case .all:
+        return "すべての投稿"
+    case .myPosts:
+        return "自分の投稿"
+    case .commented:
+        return "コメントした投稿"
+    case .saved:
+        return "保存した投稿"
+    case .popular:
+        return "人気投稿"
+    case .favorite:
+        return "いいねした投稿"
+    }
+}
+
 struct postView: View {
-    @FocusState var focus: Bool
+    @StateObject var favoriteManager = FavoriteManager()
+    @FocusState var isAnnouncefocus: Bool
     @Binding var selectedBoard: String
     @State var announceName = ""
     @Binding var postResponseList: [postResponse]
@@ -17,36 +44,122 @@ struct postView: View {
     @Binding var userId: String
     @State var commentResponseList: [commentResponse] = []
     @State var commentCount: [Int: Int] = [:]
-    @State var favoriteCount: [Int: Int] = [:]
+    @Binding var favoriteCount: [Int: Int]
     @Binding var boardId: Int
     @State var nextFavoriteCount: Int = 0
     @State var isFavoriteList : [Int: Bool] = [:]
-    @State var isFavorite: Bool = false
+    //@State var isFavorite: Bool = false
+    @State var isPresentingInsertPostView = false
+    @State var isPostAnonymous: Bool = false
+    let board: boardResponse
+    @Binding var postType: PostType
+    @Binding var intUserId: Int
+    @State private var hasLoadedPosts = false
+    
+    init(
+        board: boardResponse,
+        selectedBoard: Binding<String>,
+        postResponseList: Binding<[postResponse]>,
+        postDetail: Binding<postResponse>,
+        postId: Binding<Int>,
+        userId: Binding<String>,
+        favoriteCount: Binding<[Int: Int]>,
+        boardId: Binding<Int>,
+        postType: Binding<PostType>,
+        intUserId: Binding<Int>
+    ) {
+        self.board = board
+        self._selectedBoard = selectedBoard
+        self._postResponseList = postResponseList
+        self._postDetail = postDetail
+        self._postId = postId
+        self._userId = userId
+        self._favoriteCount = favoriteCount
+        self._boardId = boardId
+        self._postType = postType
+        self._intUserId = intUserId
+    }
+    
+    func bindingForFavorite(postId: Int) -> Binding<Bool> {
+        Binding<Bool>(
+            get: {
+                favoriteManager.isFavoriteList[postId] ?? false
+            },
+            set: { newValue in
+                favoriteManager.isFavoriteList[postId] = newValue
+            }
+        )
+    }
+    
+    func incrementFavorite(for post: postResponse) {
+        favoriteCount[post.postId, default: 0] += 1
+        favoriteManager.isFavoriteList[post.postId] = true
+        nextFavoriteCount += 1
+    }
+    
+    func decrementFavorite(for post: postResponse) {
+        favoriteCount[post.postId, default: 0] -= 1
+        favoriteManager.isFavoriteList[post.postId] = false
+        nextFavoriteCount -= 1
+    }
+    
+    //    func sendFavoriteNotification(for post: postResponse) {
+    //        if(post.posterId == userId){
+    //            return
+    //        }
+    //        getUserData(userId: post.posterId){user in
+    //            guard let user = user else {
+    //                return
+    //            }
+    //            NotificationUtil.insertNotification(
+    //                recipientId: user.id,
+    //                actorId: intUserId,
+    //                type: "favorite",
+    //                referenceTable: "Posts",
+    //                referenceId: post.postId,
+    //                completion: {_ in}
+    //
+    //            )
+    //        }
+    //    }
+    
+    func handleFavorite(post: postResponse) {
+        toggleFavorite(postId: post.postId, userId: userId, actionName: "favorite") { result in
+            guard let result = result else { return }
+            DispatchQueue.main.async{
+                if result {
+                    incrementFavorite(for: post)
+                    NotificationUtil.sendFavoriteNotification(for: .post(post), userId: userId, intUserId: intUserId)
+                } else {
+                    decrementFavorite(for: post)
+                }
+            }
+        }
+    }
     
     var body: some View {
-            VStack{
-                PostHeader(selectedBoard: $selectedBoard)
-                HStack{
-                    Image(systemName: "speaker.2")
-                        .padding(.leading, 7)
-                    TextField("アナウンス", text: $announceName)
-                        .autocapitalization(.none)
-                        .disableAutocorrection(true)
-                        .padding(.leading, 10)
-                        .font(.caption)
-                        .focused($focus)
-                        .foregroundColor(.black)
-                        .padding(7)
-                }
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(lineWidth: 0.1))
-                .background(Color(red: 0.95, green: 0.95, blue: 0.95), in: RoundedRectangle(cornerRadius: 40))
-                .padding()
-                
+        VStack{
+            PostHeader(selectedBoard: $selectedBoard)
+            HStack{
+                Image(systemName: "speaker.2")
+                    .padding(.leading, 7)
+                TextField("アナウンス", text: $announceName)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .padding(.leading, 10)
+                    .font(.caption)
+                    .focused($isAnnouncefocus)
+                    .foregroundColor(.black)
+                    .padding(7)
+            }
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(lineWidth: 0.1))
+            .background(Color(red: 0.95, green: 0.95, blue: 0.95), in: RoundedRectangle(cornerRadius: 40))
+            .padding()
+            ScrollView{
                 ForEach(postResponseList){post in
                     VStack{
                         Divider()
-                        NavigationLink(destination: PostDetailView(postDetail: $postDetail, userId: $userId, postId: $postId, selectedBoard: $selectedBoard, nextFavoriteCount: $nextFavoriteCount, isFavorite: $isFavorite)
-                                       , label: {
+                        NavigationLink(value: post){
                             VStack{
                                 Text(post.postTitle)
                                 Text(post.postMessage)
@@ -58,7 +171,6 @@ struct postView: View {
                                                     print("取得失敗")
                                                     return
                                                 }
-                                                print(results)
                                                 commentResponseList = results
                                                 commentCount[post.postId] = results.count
                                                 favoriteCount[post.postId] = post.favorite
@@ -67,30 +179,40 @@ struct postView: View {
                                     }
                                 HStack{
                                     Button(action: {
-                                        toggleFavorite(postId: post.postId, userId: userId, actionName: "favorite"){result in
-                                            print("開始")
-                                            
-                                                guard let result = result else{
-                                                    return
+                                        //                                        toggleFavorite(postId: post.postId, userId: userId, actionName: "favorite"){result in
+                                        //                                            guard let result = result else{
+                                        //                                                return
+                                        //                                            }
+                                        //                                            if(result){
+                                        //                                                favoriteCount[post.postId, default: 0] += 1
+                                        //                                                favoriteManager.isFavoriteList[post.postId] = true
+                                        //                                                nextFavoriteCount += 1
+                                        //                                                if(post.posterId != userId){
+                                        //
+                                        //                                                }
+                                        //                                            }else{
+                                        //                                                favoriteCount[post.postId, default: 0] -= 1
+                                        //                                                favoriteManager.isFavoriteList[post.postId] = false
+                                        //                                                nextFavoriteCount -= 1
+                                        //                                            }
+                                        //                                        }
+                                        //                                        handleFavorite(post: post)
+                                        toggleFavorite(postId: post.postId, userId: userId, actionName: "favorite") { result in
+                                            guard let result = result else { return }
+                                            DispatchQueue.main.async{
+                                                if result {
+                                                    incrementFavorite(for: post)
+                                                    NotificationUtil.sendFavoriteNotification(for: .post(post), userId: userId, intUserId: intUserId)
+                                                } else {
+                                                    decrementFavorite(for: post)
                                                 }
-                                            //favoriteCount[post.postId] = (favoriteCount[post.postId] ?? 0) + (result ? 1 : -1)
-                                            if(result){
-                                                favoriteCount[post.postId, default: 0] += 1
-                                                isFavoriteList[post.postId] = true
-                                                isFavorite = true
-                                                nextFavoriteCount += 1
-                                            }else{
-                                                favoriteCount[post.postId, default: 0] -= 1
-                                                isFavoriteList[post.postId] = false
-                                                isFavorite = false
-                                                nextFavoriteCount -= 1
                                             }
                                         }
                                     }, label: {
-                                        Image(systemName: isFavoriteList[post.postId] ?? false ? "heart.fill": "heart")
+                                        Image(systemName: favoriteManager.isFavoriteList[post.postId] ?? false ? "heart.fill": "heart")
                                             .resizable()
                                             .frame(width: 8, height: 8)
-                                            .foregroundColor(isFavoriteList[post.postId] ?? false ? .red: .gray)
+                                            .foregroundColor(favoriteManager.isFavoriteList[post.postId] ?? false ? .red: .gray)
                                     })
                                     Text("\(favoriteCount[post.postId] ?? 0)")
                                     Image(systemName: "bubble")
@@ -107,7 +229,6 @@ struct postView: View {
                                 .font(.caption)
                             }
                         }
-                        )
                         .simultaneousGesture(TapGesture().onEnded {
                             postId = post.postId
                             postDetail = post
@@ -115,19 +236,6 @@ struct postView: View {
                     }
                     .foregroundColor(.black)
                     .onAppear{
-                        isFavoriteList[post.postId] = isFavorite
-                        getActionPost(userId: userId){results in
-                            DispatchQueue.main.async{
-                                guard let results = results else{
-                                    return
-                                }
-                                for result in results{
-                                    if(result.actionName == "favorite" && result.postId == post.postId){
-                                        isFavoriteList[post.postId] = true
-                                    }
-                                }
-                            }
-                        }
                         getPostFavorite(postId: post.postId){result in
                             DispatchQueue.main.async{
                                 guard let result = result else{
@@ -135,40 +243,88 @@ struct postView: View {
                                 }
                                 favoriteCount[post.postId, default: 0] = result
                                 nextFavoriteCount = favoriteCount[post.postId, default: 0]
-                                print("今は", favoriteCount, "次は", nextFavoriteCount)
-                                print("前どっち", isFavorite, isFavoriteList)
                             }
                         }
                     }
                 }
-                
-                Spacer()
-                Button(action: {
-                    
-                },
-                       label: {
-                    Text("投稿")
-                }
-                )
             }
-            .onAppear{
-                getPosts(boardId: boardId) { results in
-                    DispatchQueue.main.async {
-                        guard let results = results else {
-                            print("取得失敗")
-                            return
-                        }
-                        print(results)
-                        postResponseList = results
-                    }
-                }
+            Spacer()
+            Button(action: {
+                isPresentingInsertPostView = true
+            },label: {
+                Image(systemName: "pencil")
+                Text("作成")
             }
-        .navigationBarHidden(true)
+            )
+            .foregroundColor(Color(red: 1.0, green: 0.32, blue: 0.32))
+            .padding()
+            .background(Color.white) // 背景色
+            .cornerRadius(10) // 角丸
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+            )
+            .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+            .padding(EdgeInsets(top: 0, leading: 16, bottom: 16, trailing: 16))
         }
+        .sheet(isPresented: $isPresentingInsertPostView, onDismiss: {
+            Task {
+                await loadPosts()
+            }
+            //            getPosts(boardId: boardId, userId: userId, postType: postType) { results in
+            //                DispatchQueue.main.async {
+            //                    guard let results = results else {
+            //                        print("取得失敗")
+            //                        return
+            //                    }
+            //                    postResponseList = results
+            //                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            //                        favoriteManager.loadFavorites(userId: userId, posts: results)
+            //                    }
+            //                }
+            //            }
+        }) {
+            insertPostView(isPresentingInsertPostView: $isPresentingInsertPostView, userId: $userId, boardId: $boardId)
+        }
+        .task{
+            guard !hasLoadedPosts else { return }
+            hasLoadedPosts = true
+            //            getPosts(boardId: boardId, userId: userId, postType: postType) { results in
+            //                DispatchQueue.main.async {
+            //                    guard let results = results else {
+            //                        print("取得失敗")
+            //                        return
+            //                    }
+            //                    postResponseList = results
+            //                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            //                        favoriteManager.loadFavorites(userId: userId, posts: results)
+            //                    }
+            //                }
+            //            }
+            await loadPosts()
+            
+        }
+        .navigationBarHidden(true)
+        
+    }
+    
+    private func loadPosts() async {
+        do {
+            let results = try await getPosts(
+                boardId: boardId,
+                userId: userId,
+                postType: postType
+            )
+            
+            postResponseList = results
+            favoriteManager.loadFavorites(
+                        userId: userId,
+                        posts: results
+            )
+            
+        } catch {
+            print(error)
+        }
+    }
     
 }
-
-/*
-#Preview {
-    postView(postFlg: false)
-}*/

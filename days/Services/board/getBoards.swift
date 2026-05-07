@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct boardResponse: Codable, Identifiable{
+struct boardResponse: Codable, Identifiable, Hashable{
     let id = UUID()
     var boardId: Int
     var boardName: String
@@ -15,7 +15,7 @@ struct boardResponse: Codable, Identifiable{
 }
 
 func getBoards(completion: @escaping([boardResponse]?) -> Void){
-    guard let url = URL(string: "http://localhost:3000/getBoards")else{
+    guard let url = URL(string: "http://192.168.86.79:3000/getBoards")else{
     return completion(nil)
     }
     var request = URLRequest(url: url)
@@ -29,14 +29,12 @@ func getBoards(completion: @escaping([boardResponse]?) -> Void){
         }
         
         if let response = response as? HTTPURLResponse{
-            print("StatusCode: \(response.statusCode)")
         }
         
         if let data = data{
             print(data)
             do{
                 let responseData = try JSONDecoder().decode([boardResponse].self, from: data)
-                print("Response: \(responseData)")
                 completion(responseData)
             }catch{
                 print("Error encording response: \(error)")

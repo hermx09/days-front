@@ -18,9 +18,7 @@ struct registerResponse: Codable{
 
 func registerLecture(userId: String, lectureId: Int, completion: @escaping(String?) -> Void){
     
-    print("登録開始")
-    
-    guard let url = URL(string: "http://localhost:3000/registerLecture")else{
+    guard let url = URL(string: "http://192.168.86.79:3000/registerLecture")else{
         completion(nil)
         return
     }
@@ -44,16 +42,11 @@ func registerLecture(userId: String, lectureId: Int, completion: @escaping(Strin
             print("Request error: \(error)")
             completion(nil)
             return
-        }
-        
-        if let httpResponse = response as? HTTPURLResponse{
-            print("StatusCode: \(httpResponse.statusCode)")
-        }
+        }            
         
         if let data = data{
             do{
-                var responseData = try JSONDecoder().decode(registerResponse.self, from: data)
-                print("Response: \(responseData)")
+                var responseData = try JSONDecoder().decode(registerResponse.self, from: data)                
                 completion(responseData.registerResponse)
             }catch{
                 print("Decoding error: \(error)")

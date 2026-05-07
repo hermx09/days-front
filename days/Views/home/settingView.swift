@@ -10,25 +10,18 @@ import SwiftUI
 struct settingView: View {
     @Binding var auth: Bool
     @Binding var settingFlg: Bool
+    @Binding var homePath: NavigationPath
     var body: some View {
         VStack{
-            Button(action: {
-                print("トークン削除")
+            Button(action: {                
                 UserDefaults.standard.removeObject(forKey: "jwtToken")
                 auth = true
                 settingFlg = false
+                homePath.removeLast(homePath.count)
             }, label: {
                 Text("ログアウト")
                     .foregroundColor(.black)
             })
         }
-    }
-}
-
-struct settingView_Previews: PreviewProvider{
-    @State static var auth = false
-    @State static var settingFlg = true
-    static var previews: some View{
-        settingView(auth: $auth, settingFlg: $settingFlg)
     }
 }

@@ -15,14 +15,14 @@ struct commentResponse: Codable, Equatable, Identifiable{
     var favorite: Int
     var postId: Int
     var createdAt: String
+    var isAnonymous: Bool
 }
 
 func getComments(postId: Int, completion: @escaping([commentResponse]?) -> Void){
     let queryItems = [URLQueryItem(name: "postId", value: String(postId))]
     APIRequest.getRequest(endPoint: "/getComments", queryItems: queryItems){(result: Result<[commentResponse], Error>) in
         switch result{
-        case .success(let comments):
-            print("コメント: \(comments)")
+        case .success(let comments):            
             completion(comments)
         case .failure(let error):
             print("エラー: \(error)")

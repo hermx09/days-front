@@ -22,7 +22,7 @@ struct responseUserLectures: Codable, Equatable, Identifiable{
 
 func getUserLectures(userId: String, completion: @escaping([responseUserLectures]?) -> Void){
     
-    var components = URLComponents(string: "http://localhost:3000/getUserLectures")
+    var components = URLComponents(string: "http://192.168.86.79:3000/getUserLectures")
         
         components?.queryItems = [
             URLQueryItem(name: "userId", value: userId)
@@ -46,16 +46,10 @@ func getUserLectures(userId: String, completion: @escaping([responseUserLectures
             completion(nil)
             return
         }
-        
-        if let httpResponse = response as? HTTPURLResponse{
-            print("StatusCode: \(httpResponse.statusCode)")
-        }
-        
+                    
         do{
             if let data = data{
-                print("data: \(data)")
-                let responseData = try JSONDecoder().decode([responseUserLectures].self, from: data)
-                print("Response: \(responseData)")
+                let responseData = try JSONDecoder().decode([responseUserLectures].self, from: data)                
                 completion(responseData)
             }
         }catch{
