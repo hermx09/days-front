@@ -75,10 +75,10 @@
 		B0F5B5D62FACEE8F0019D14B = {
 			isa = PBXGroup;
 			children = (
-				B0F5B5E12FACEE8F0019D14B /* days_front */,
 				B0F5B5EF2FACEE910019D14B /* days_frontTests */,
 				B0F5B5F92FACEE910019D14B /* days_frontUITests */,
 				B0F5B5E02FACEE8F0019D14B /* Products */,
+				B0F5B5E12FACEE8F0019D14B /* days_front */,
 			);
 			sourceTree = "<group>";
 		};

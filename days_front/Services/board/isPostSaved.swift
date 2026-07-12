@@ -1,0 +1,20 @@
+//
+//  getPostFavorite.swift
+//  days
+//
+//  Created by 長山瑞 on 2025/02/06.
+//
+
+import Foundation
+
+public func isPostSaved(userId: String, postId: Int, actionName: String, completion: @escaping(Bool?) -> Void){
+    let queryItems = [URLQueryItem(name: "userId", value: userId), URLQueryItem(name: "postId", value: String(postId)), URLQueryItem(name: "actionName", value: actionName)]
+    APIRequest.getRequest(endPoint: "/isPostSaved", queryItems: queryItems){(result: Result<Bool, Error>) in
+        switch result{
+        case .success(let success):
+            completion(success)
+        case .failure(let error):
+            completion(nil)
+        }
+    }
+}
